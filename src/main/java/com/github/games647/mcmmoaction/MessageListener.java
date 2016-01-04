@@ -68,12 +68,14 @@ public class MessageListener extends PacketAdapter {
 
     private void removeHoverEvent(JSONArray components) {
         for (Object component : components) {
-            JSONObject jsonComponent = (JSONObject) component;
-            //if this object has also extra or with components use recursion to remove all
-            cleanJsonFromHover(jsonComponent);
+            if (component instanceof JSONObject) {
+                JSONObject jsonComponent = (JSONObject) component;
+                //if this object has also extra or with components use recursion to remove all
+                cleanJsonFromHover(jsonComponent);
 
-            //due this issue: https://github.com/SpigotMC/BungeeCord/issues/1300
-            jsonComponent.remove("hoverEvent");
+                //due this issue: https://github.com/SpigotMC/BungeeCord/issues/1300
+                jsonComponent.remove("hoverEvent");
+            }
         }
     }
 }
