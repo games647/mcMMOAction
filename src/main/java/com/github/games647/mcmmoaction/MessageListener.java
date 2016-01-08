@@ -38,6 +38,9 @@ public class MessageListener extends PacketAdapter {
             WrappedChatComponent message = packet.getChatComponents().read(0);
             String json = message.getJson();
             String cleanedJson = JSONValue.toJSONString(cleanJsonFromHover(json));
+            if (cleanedJson == null) {
+                return;
+            }
 
             BaseComponent chatComponent = ComponentSerializer.parse(cleanedJson)[0];
             if (plugin.isMcmmoMessage(chatComponent.toPlainText())) {
@@ -48,8 +51,13 @@ public class MessageListener extends PacketAdapter {
     }
 
     private JSONObject cleanJsonFromHover(String json) {
-        JSONObject jsonComponent = (JSONObject) JSONValue.parse(json);
-        return cleanJsonFromHover(jsonComponent);
+        Object parseComponent = JSONValue.parse(json);
+        if (parseComponent instanceof JSONObject) {
+            JSONObject jsonComponent = (JSONObject) parseComponent;
+            return cleanJsonFromHover(jsonComponent);
+        }
+
+        return null;
     }
 
     private JSONObject cleanJsonFromHover(JSONObject jsonComponent) {
@@ -73,7 +81,7 @@ public class MessageListener extends PacketAdapter {
                 //if this object has also extra or with components use recursion to remove all
                 cleanJsonFromHover(jsonComponent);
 
-                //due this issue: https://github.com/SpigotMC/BungeeCord/issues/1300
+                //due this issue: https://github.com/SpigotMC/BungeeCord/issues/1300 - there a class is missing
                 jsonComponent.remove("hoverEvent");
             }
         }
