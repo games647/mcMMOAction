@@ -7,7 +7,7 @@ import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.datatypes.skills.ToolType;
 import com.gmail.nossr50.locale.LocaleLoader;
 import com.gmail.nossr50.util.StringUtils;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import java.util.regex.Pattern;
 
@@ -20,7 +20,7 @@ public class mcMMOAction extends JavaPlugin {
     //compile the pattern just once
     private final Pattern numberRemover = Pattern.compile("[0-9]");
     //create a immutable list in order to be thread-safe and faster than normal lists
-    private ImmutableList<String> localizedMessages;
+    private ImmutableSet<String> localizedMessages;
 
     @Override
     public void onEnable() {
@@ -37,7 +37,7 @@ public class mcMMOAction extends JavaPlugin {
     }
 
     private void loadLocales() {
-        ImmutableList.Builder<String> builder = ImmutableList.builder();
+        ImmutableSet.Builder<String> builder = ImmutableSet.builder();
         for (SkillType skillType : SkillType.values()) {
             String messageKey = StringUtils.getCapitalized(skillType.toString()) + ".Skillup";
             builder.add(getLocalizedMessage(messageKey, 0, 0));
