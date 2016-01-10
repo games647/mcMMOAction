@@ -45,6 +45,7 @@ public class MessageListener extends PacketAdapter {
             BaseComponent chatComponent = ComponentSerializer.parse(cleanedJson)[0];
             if (plugin.isMcmmoMessage(chatComponent.toPlainText())) {
                 packet.getBytes().write(0, ACTIONBAR_POSITION);
+                //action bar doesn't support these features
                 packet.getChatComponents().write(0, WrappedChatComponent.fromText(chatComponent.toLegacyText()));
             }
         }
@@ -78,7 +79,7 @@ public class MessageListener extends PacketAdapter {
         for (Object component : components) {
             if (component instanceof JSONObject) {
                 JSONObject jsonComponent = (JSONObject) component;
-                //if this object has also extra or with components use recursion to remove all
+                //if this object has also extra or with components use them there too
                 cleanJsonFromHover(jsonComponent);
 
                 //due this issue: https://github.com/SpigotMC/BungeeCord/issues/1300 - there a class is missing

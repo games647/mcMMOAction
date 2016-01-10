@@ -24,7 +24,7 @@ public class mcMMOAction extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        loadLocales();
+        loadAllMessages();
 
         AsynchronousManager asyncManager = ProtocolLibrary.getProtocolManager().getAsynchronousManager();
         asyncManager.registerAsyncHandler(new MessageListener(this)).start();
@@ -32,11 +32,12 @@ public class mcMMOAction extends JavaPlugin {
 
     //this method has to be thread-safe
     public boolean isMcmmoMessage(String plainText) {
+        //remove the numbers to match the string easier
         String cleanedMessage = numberRemover.matcher(plainText).replaceAll("");
         return localizedMessages.contains(cleanedMessage);
     }
 
-    private void loadLocales() {
+    private void loadAllMessages() {
         ImmutableSet.Builder<String> builder = ImmutableSet.builder();
         for (SkillType skillType : SkillType.values()) {
             String messageKey = StringUtils.getCapitalized(skillType.toString()) + ".Skillup";
@@ -55,6 +56,28 @@ public class mcMMOAction extends JavaPlugin {
             }
         }
 
+        //messages that cannot be retrieved dynmaically because the message key isn't in the enum getSkillAbilities()
+        builder.add(getLocalizedMessage("Herbalism.Ability.ShroomThumb.Fail"));
+        builder.add(getLocalizedMessage("Herbalism.Ability.GTh.Fail"));
+        builder.add(getLocalizedMessage("Herbalism.Ability.GTh"));
+        builder.add(getLocalizedMessage("Mining.Blast.Boom"));
+        builder.add(getLocalizedMessage("Acrobatics.Roll.Text"));
+        builder.add(getLocalizedMessage("Acrobatics.Ability.Proc"));
+        builder.add(getLocalizedMessage("Acrobatics.Combat.Proc"));
+        builder.add(getLocalizedMessage("Swords.Combat.Bleeding"));
+        builder.add(getLocalizedMessage("Swords.Combat.Bleeding.Stopped"));
+        builder.add(getLocalizedMessage("Swords.Combat.Countered"));
+
+        //non skill type specific messages
+        builder.add(getLocalizedMessage("Combat.ArrowDeflect"));
+        builder.add(getLocalizedMessage("Combat.BeastLore"));
+        builder.add(getLocalizedMessage("Combat.Gore"));
+        builder.add(getLocalizedMessage("Combat.StruckByGore"));
+        builder.add(getLocalizedMessage("Item.ChimaeraWing.Fail"));
+        builder.add(getLocalizedMessage("Item.ChimaeraWing.Pass"));
+
+        //general messages
+        builder.add(getLocalizedMessage("Ability.Generic.Refresh"));
         builder.add(getLocalizedMessage("Skills.TooTired", 0));
 
         localizedMessages = builder.build();
