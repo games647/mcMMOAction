@@ -19,7 +19,7 @@ public class mcMMOAction extends JavaPlugin {
 
     //compile the pattern just once
     private final Pattern numberRemover = Pattern.compile("[0-9]");
-    //create a immutable list in order to be thread-safe and faster than normal lists
+    //create a immutable set in order to be thread-safe and faster than normal sets
     private ImmutableSet<String> localizedMessages;
 
     @Override
@@ -40,8 +40,10 @@ public class mcMMOAction extends JavaPlugin {
     private void loadAllMessages() {
         ImmutableSet.Builder<String> builder = ImmutableSet.builder();
         for (SkillType skillType : SkillType.values()) {
-            String messageKey = StringUtils.getCapitalized(skillType.toString()) + ".Skillup";
-            builder.add(getLocalizedMessage(messageKey, 0, 0));
+            if (skillType.isChildSkill()) {
+                String messageKey = StringUtils.getCapitalized(skillType.toString()) + ".Skillup";
+                builder.add(getLocalizedMessage(messageKey, 0, 0));
+            }
 
             AbilityType ability = skillType.getAbility();
             if (ability != null) {
