@@ -33,8 +33,8 @@ public class MessageListener extends PacketAdapter {
         }
 
         PacketContainer packet = packetEvent.getPacket();
-        Byte chatPosition = packet.getBytes().read(0);
-        if (chatPosition.byteValue() == NORMAL_CHAT_POSTION) {
+        byte chatPosition = packet.getBytes().read(0);
+        if (chatPosition == NORMAL_CHAT_POSTION) {
             WrappedChatComponent message = packet.getChatComponents().read(0);
             String json = message.getJson();
             String cleanedJson = JSONValue.toJSONString(cleanJsonFromHover(json));
@@ -43,9 +43,9 @@ public class MessageListener extends PacketAdapter {
             }
 
             BaseComponent chatComponent = ComponentSerializer.parse(cleanedJson)[0];
-            if (plugin.isMcmmoMessage(chatComponent.toPlainText())) {
+            if (chatComponent != null && plugin.isMcmmoMessage(chatComponent.toPlainText())) {
                 packet.getBytes().write(0, ACTIONBAR_POSITION);
-                //action bar doesn't support these features
+                //action bar doesn't support the new chat features
                 packet.getChatComponents().write(0, WrappedChatComponent.fromText(chatComponent.toLegacyText()));
             }
         }
