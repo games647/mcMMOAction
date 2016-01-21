@@ -40,7 +40,7 @@ public class mcMMOAction extends JavaPlugin {
     private void loadAllMessages() {
         ImmutableSet.Builder<String> builder = ImmutableSet.builder();
         for (SkillType skillType : SkillType.values()) {
-            if (skillType.isChildSkill()) {
+            if (!skillType.isChildSkill()) {
                 String messageKey = StringUtils.getCapitalized(skillType.toString()) + ".Skillup";
                 builder.add(getLocalizedMessage(messageKey, 0, 0));
             }
