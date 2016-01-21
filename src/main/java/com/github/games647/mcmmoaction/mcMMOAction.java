@@ -1,7 +1,7 @@
 package com.github.games647.mcmmoaction;
 
-import com.comphenix.protocol.AsynchronousManager;
 import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import com.gmail.nossr50.datatypes.skills.AbilityType;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.datatypes.skills.ToolType;
@@ -26,8 +26,12 @@ public class mcMMOAction extends JavaPlugin {
     public void onEnable() {
         loadAllMessages();
 
-        AsynchronousManager asyncManager = ProtocolLibrary.getProtocolManager().getAsynchronousManager();
-        asyncManager.registerAsyncHandler(new MessageListener(this)).start();
+        //the event could and should be executed async, but if we try to use it with other sync listeners
+        //the sending order gets mixed up
+//        AsynchronousManager asyncManager = ProtocolLibrary.getProtocolManager().getAsynchronousManager();
+//        asyncManager.registerAsyncHandler(new MessageListener(this)).start();
+        ProtocolManager protManager = ProtocolLibrary.getProtocolManager();
+        protManager.addPacketListener(new MessageListener(this));
     }
 
     //this method has to be thread-safe
