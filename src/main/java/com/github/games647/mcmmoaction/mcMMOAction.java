@@ -62,7 +62,8 @@ public class mcMMOAction extends JavaPlugin {
             }
         }
 
-        //messages that cannot be retrieved dynmaically because the message key isn't in the enum getSkillAbilities()
+        //messages that cannot be retrieved dynmaically because the message key isn't in (or equal as)
+        //the enum getSkillAbilities() - SecondaryAbilities
         builder.add(getLocalizedMessage("Herbalism.Ability.ShroomThumb.Fail"));
         builder.add(getLocalizedMessage("Herbalism.Ability.GTh.Fail"));
         builder.add(getLocalizedMessage("Herbalism.Ability.GTh"));
@@ -70,6 +71,11 @@ public class mcMMOAction extends JavaPlugin {
         builder.add(getLocalizedMessage("Acrobatics.Roll.Text"));
         builder.add(getLocalizedMessage("Acrobatics.Ability.Proc"));
         builder.add(getLocalizedMessage("Acrobatics.Combat.Proc"));
+        builder.add(getLocalizedMessage("Axes.Combat.SS.Struck"));
+        builder.add(getLocalizedMessage("Axes.Combat.GI.Struck"));
+        builder.add(getLocalizedMessage("Axes.Combat.SS.Struck"));
+        builder.add(getLocalizedMessage("Axes.Combat.CriticalHit"));
+        builder.add(getLocalizedMessage("Axes.Combat.CritStruck"));
         builder.add(getLocalizedMessage("Swords.Combat.Bleeding"));
         builder.add(getLocalizedMessage("Swords.Combat.Bleeding.Stopped"));
         builder.add(getLocalizedMessage("Swords.Combat.Countered"));
