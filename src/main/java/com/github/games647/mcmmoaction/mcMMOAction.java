@@ -6,9 +6,13 @@ import com.gmail.nossr50.datatypes.skills.AbilityType;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.datatypes.skills.ToolType;
 import com.gmail.nossr50.locale.LocaleLoader;
+import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.util.StringUtils;
 import com.google.common.collect.ImmutableSet;
 
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 import net.md_5.bungee.api.ChatColor;
@@ -16,6 +20,9 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class mcMMOAction extends JavaPlugin {
+
+    private static final String BUNDLE_ROOT = "com.gmail.nossr50.locale.locale";
+    private static final String NOTIFCATION_IDENTIFIER = "**";
 
     //compile the pattern just once
     private final Pattern numberRemover = Pattern.compile("[0-9]");
@@ -64,35 +71,32 @@ public class mcMMOAction extends JavaPlugin {
 
         //messages that cannot be retrieved dynmaically because the message key isn't in (or equal as)
         //the enum getSkillAbilities() - SecondaryAbilities
-        builder.add(getLocalizedMessage("Herbalism.Ability.ShroomThumb.Fail"));
-        builder.add(getLocalizedMessage("Herbalism.Ability.GTh.Fail"));
-        builder.add(getLocalizedMessage("Herbalism.Ability.GTh"));
-        builder.add(getLocalizedMessage("Mining.Blast.Boom"));
-        builder.add(getLocalizedMessage("Acrobatics.Roll.Text"));
-        builder.add(getLocalizedMessage("Acrobatics.Ability.Proc"));
-        builder.add(getLocalizedMessage("Acrobatics.Combat.Proc"));
         builder.add(getLocalizedMessage("Axes.Combat.SS.Struck"));
-        builder.add(getLocalizedMessage("Axes.Combat.GI.Struck"));
-        builder.add(getLocalizedMessage("Axes.Combat.SS.Struck"));
+
         builder.add(getLocalizedMessage("Axes.Combat.CriticalHit"));
         builder.add(getLocalizedMessage("Axes.Combat.CritStruck"));
+
         builder.add(getLocalizedMessage("Swords.Combat.Bleeding"));
         builder.add(getLocalizedMessage("Swords.Combat.Bleeding.Stopped"));
-        builder.add(getLocalizedMessage("Swords.Combat.Countered"));
 
-        //non skill type specific messages
-        builder.add(getLocalizedMessage("Combat.ArrowDeflect"));
-        builder.add(getLocalizedMessage("Combat.BeastLore"));
-        builder.add(getLocalizedMessage("Combat.Gore"));
-        builder.add(getLocalizedMessage("Combat.StruckByGore"));
-        builder.add(getLocalizedMessage("Item.ChimaeraWing.Fail"));
-        builder.add(getLocalizedMessage("Item.ChimaeraWing.Pass"));
-
-        //general messages
-        builder.add(getLocalizedMessage("Ability.Generic.Refresh"));
+        //general message
         builder.add(getLocalizedMessage("Skills.TooTired", 0));
 
+        loadingByIdentifier(builder);
+
         localizedMessages = builder.build();
+    }
+
+    private void loadingByIdentifier(ImmutableSet.Builder<String> builder) {
+        ClassLoader classLoader = mcMMO.p.getClass().getClassLoader();
+        ResourceBundle enBundle = ResourceBundle.getBundle(BUNDLE_ROOT, Locale.US, classLoader);
+        for (Enumeration<String> enumeration = enBundle.getKeys(); enumeration.hasMoreElements();) {
+            String key = enumeration.nextElement();
+            String localizedMessage = getLocalizedMessage(key);
+            if (localizedMessage.endsWith(NOTIFCATION_IDENTIFIER)) {
+                builder.add(localizedMessage);
+            }
+        }
     }
 
     private String getLocalizedMessage(String key, Object... messageArgs) {
