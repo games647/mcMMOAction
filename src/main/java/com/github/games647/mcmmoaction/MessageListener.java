@@ -47,6 +47,7 @@ public class MessageListener extends PacketAdapter {
                 packet.getBytes().write(0, ACTIONBAR_POSITION);
                 //action bar doesn't support the new chat features
                 packet.getChatComponents().write(0, WrappedChatComponent.fromText(chatComponent.toLegacyText()));
+                plugin.playNotificationSound(packetEvent.getPlayer());
             }
         }
     }

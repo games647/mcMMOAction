@@ -13,10 +13,13 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 import net.md_5.bungee.api.ChatColor;
 
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class mcMMOAction extends JavaPlugin {
@@ -29,8 +32,16 @@ public class mcMMOAction extends JavaPlugin {
     //create a immutable set in order to be thread-safe and faster than normal sets
     private ImmutableSet<String> localizedMessages;
 
+    //notification sound
+    private boolean soundEnabled;
+    private Sound sound;
+    private float volume;
+    private float pitch;
+
     @Override
     public void onEnable() {
+        loadConfig();
+
         loadAllMessages();
 
         //the event could and should be executed async, but if we try to use it with other sync listeners
@@ -46,6 +57,12 @@ public class mcMMOAction extends JavaPlugin {
         //remove the numbers to match the string easier
         String cleanedMessage = numberRemover.matcher(plainText).replaceAll("");
         return localizedMessages.contains(cleanedMessage);
+    }
+
+    public void playNotificationSound(Player player) {
+        if (soundEnabled && sound != null) {
+            player.playSound(player.getLocation(), sound, volume, pitch);
+        }
     }
 
     private void loadAllMessages() {
@@ -105,5 +122,24 @@ public class mcMMOAction extends JavaPlugin {
         String plainMessageText = ChatColor.stripColor(localizedMessage);
         //remove all numbers in order to match it with the sent message in general
         return numberRemover.matcher(plainMessageText).replaceAll("");
+    }
+
+    private void loadConfig() {
+        saveDefaultConfig();
+        String configCategory = "notificaiton-sound";
+
+        soundEnabled = getConfig().getBoolean(configCategory + ".enabled");
+        if (soundEnabled) {
+            volume = (float) getConfig().getDouble(configCategory + ".volume");
+            pitch = (float) getConfig().getDouble(configCategory + ".pitch");
+
+            String soundType = getConfig().getString(configCategory + ".type");
+            try {
+                sound = Sound.valueOf(soundType.toUpperCase());
+            } catch (IllegalStateException illegalStateException) {
+                getLogger().log(Level.WARNING, "Failed to load the sound type", illegalStateException);
+                sound = null;
+            }
+        }
     }
 }
