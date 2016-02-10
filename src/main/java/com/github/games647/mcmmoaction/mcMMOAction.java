@@ -96,6 +96,13 @@ public class mcMMOAction extends JavaPlugin {
         builder.add(getLocalizedMessage("Swords.Combat.Bleeding"));
         builder.add(getLocalizedMessage("Swords.Combat.Bleeding.Stopped"));
 
+        //hardcore messages
+        builder.add(getLocalizedMessage("Hardcore.DeathStatLoss.PlayerDeath", 0));
+        builder.add(getLocalizedMessage("Hardcore.Vampirism.Killer.Failure", 0));
+        builder.add(getLocalizedMessage("Hardcore.Vampirism.Killer.Success", 0, 0));
+        builder.add(getLocalizedMessage("Hardcore.Vampirism.Victim.Failure", 0));
+        builder.add(getLocalizedMessage("Hardcore.Vampirism.Victim.Success", 0, 0));
+
         //general message
         builder.add(getLocalizedMessage("Skills.TooTired", 0));
 
