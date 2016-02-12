@@ -18,6 +18,8 @@ public class MessageListener extends PacketAdapter {
     private static final byte NORMAL_CHAT_POSTION = 1;
     private static final byte ACTIONBAR_POSITION = 2;
 
+    private static final String PLUGIN_TAG = "[mcMMO] ";
+
     private final mcMMOAction plugin;
 
     public MessageListener(mcMMOAction plugin) {
@@ -46,7 +48,8 @@ public class MessageListener extends PacketAdapter {
             if (chatComponent != null && plugin.isMcmmoMessage(chatComponent.toPlainText())) {
                 packet.getBytes().write(0, ACTIONBAR_POSITION);
                 //action bar doesn't support the new chat features
-                packet.getChatComponents().write(0, WrappedChatComponent.fromText(chatComponent.toLegacyText()));
+                String legacyText = chatComponent.toLegacyText().replace(PLUGIN_TAG, "");
+                packet.getChatComponents().write(0, WrappedChatComponent.fromText(legacyText));
                 plugin.playNotificationSound(packetEvent.getPlayer());
             }
         }
