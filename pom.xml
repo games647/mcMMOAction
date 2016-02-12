@@ -87,7 +87,7 @@
         <!--mcMMO-->
         <repository>
             <id>drtshock-releases</id>
-            <url>https://ci.drtshock.net/plugin/repository/everything/</url>
+            <url>http://ci.drtshock.net/plugin/repository/everything/</url>
         </repository>
 
         <!--ProtocolLib-->
