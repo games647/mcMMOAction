@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>mcMMOAction</name>
-    <version>0.6.1</version>
+    <version>0.7</version>
     <inceptionYear>2016</inceptionYear>
     <url>http://dev.bukkit.org/bukkit-plugins/mcmmoaction/</url>
     <description>
@@ -102,7 +102,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.8.8-R0.1-SNAPSHOT</version>
+            <version>1.9-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 

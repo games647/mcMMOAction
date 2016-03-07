@@ -83,11 +83,12 @@ public class MessageListener extends PacketAdapter {
         for (Object component : components) {
             if (component instanceof JSONObject) {
                 JSONObject jsonComponent = (JSONObject) component;
-                //if this object has also extra or with components use them there too
-                cleanJsonFromHover(jsonComponent);
 
                 //due this issue: https://github.com/SpigotMC/BungeeCord/issues/1300 - there is a class missing
                 jsonComponent.remove("hoverEvent");
+
+                //if this object has also extra or with components use them there too
+                cleanJsonFromHover(jsonComponent);
             }
         }
     }

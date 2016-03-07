@@ -12,8 +12,10 @@ the plugin in your plugins folder and start your server.
 ## Features
 
 * Lightweight
+* Sound when receiving a notification
 * Support many mcMMO messages
 * Supports localized messages
+* Ignore the messages you don't want to see in the action bar
 * Good performance - Messages are loaded only once in a fast collection
 
 ## Supported messages
@@ -22,6 +24,7 @@ the plugin in your plugins folder and start your server.
 * Too tired message
 * Ability activate and deactivate messages
 * Tool raise and lower messages
+* Hardcore messages
 * Refresh message
 
 ## Dependencies

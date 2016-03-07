@@ -9,10 +9,13 @@ import com.gmail.nossr50.locale.LocaleLoader;
 import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.util.StringUtils;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
@@ -66,52 +69,68 @@ public class mcMMOAction extends JavaPlugin {
     }
 
     private void loadAllMessages() {
-        ImmutableSet.Builder<String> builder = ImmutableSet.builder();
+        Set<String> messages = Sets.newHashSet();
+
+        loadingByIdentifier(messages);
+
         for (SkillType skillType : SkillType.values()) {
             if (!skillType.isChildSkill()) {
                 String messageKey = StringUtils.getCapitalized(skillType.toString()) + ".Skillup";
-                builder.add(getLocalizedMessage(messageKey, 0, 0));
+                String localizedMessage = getLocalizedMessage(messageKey);
+                addOrRemove(messages, localizedMessage, getConfig().getBoolean("ignore.levelup"));
             }
 
             AbilityType ability = skillType.getAbility();
             if (ability != null) {
-                builder.add(ChatColor.stripColor(ability.getAbilityOn()));
-                builder.add(ChatColor.stripColor(ability.getAbilityOff()));
+                String abilityOn = ChatColor.stripColor(ability.getAbilityOn());
+                String abilityOff = ChatColor.stripColor(ability.getAbilityOff());
+                addOrRemove(messages, abilityOn, getConfig().getBoolean("ignore.ability"));
+                addOrRemove(messages, abilityOff, getConfig().getBoolean("ignore.ability"));
             }
 
             ToolType tool = skillType.getTool();
             if (tool != null) {
-                builder.add(ChatColor.stripColor(tool.getRaiseTool()));
-                builder.add(ChatColor.stripColor(tool.getLowerTool()));
+                addOrRemove(messages, ChatColor.stripColor(tool.getRaiseTool()), getConfig().getBoolean("ignore.tool"));
+                addOrRemove(messages, ChatColor.stripColor(tool.getLowerTool()), getConfig().getBoolean("ignore.tool"));
             }
         }
 
         //messages that cannot be retrieved dynmaically because the message key isn't in (or equal as)
         //the enum getSkillAbilities() - SecondaryAbilities
-        builder.add(getLocalizedMessage("Axes.Combat.SS.Struck"));
+        messages.add(getLocalizedMessage("Axes.Combat.SS.Struck"));
 
-        builder.add(getLocalizedMessage("Axes.Combat.CriticalHit"));
-        builder.add(getLocalizedMessage("Axes.Combat.CritStruck"));
+        messages.add(getLocalizedMessage("Axes.Combat.CriticalHit"));
+        messages.add(getLocalizedMessage("Axes.Combat.CritStruck"));
 
-        builder.add(getLocalizedMessage("Swords.Combat.Bleeding"));
-        builder.add(getLocalizedMessage("Swords.Combat.Bleeding.Stopped"));
+        messages.add(getLocalizedMessage("Swords.Combat.Bleeding"));
+        messages.add(getLocalizedMessage("Swords.Combat.Bleeding.Stopped"));
 
         //hardcore messages
-        builder.add(getLocalizedMessage("Hardcore.DeathStatLoss.PlayerDeath", 0));
-        builder.add(getLocalizedMessage("Hardcore.Vampirism.Killer.Failure", 0));
-        builder.add(getLocalizedMessage("Hardcore.Vampirism.Killer.Success", 0, 0));
-        builder.add(getLocalizedMessage("Hardcore.Vampirism.Victim.Failure", 0));
-        builder.add(getLocalizedMessage("Hardcore.Vampirism.Victim.Success", 0, 0));
+        addOrRemove(messages, getLocalizedMessage("Hardcore.DeathStatLoss.PlayerDeath"), getConfig().getBoolean("ignore.hardcore"));
+        addOrRemove(messages, getLocalizedMessage("Hardcore.Vampirism.Killer.Failure"), getConfig().getBoolean("ignore.hardcore"));
+        addOrRemove(messages, getLocalizedMessage("Hardcore.Vampirism.Killer.Success"), getConfig().getBoolean("ignore.hardcore"));
+        addOrRemove(messages, getLocalizedMessage("Hardcore.Vampirism.Victim.Failure"), getConfig().getBoolean("ignore.hardcore"));
+        addOrRemove(messages, getLocalizedMessage("Hardcore.Vampirism.Victim.Success"), getConfig().getBoolean("ignore.hardcore"));
 
         //general message
-        builder.add(getLocalizedMessage("Skills.TooTired", 0));
+        addOrRemove(messages, getLocalizedMessage("Skills.TooTired"), getConfig().getBoolean("ignore.tooTired"));
 
-        loadingByIdentifier(builder);
+        for (String key : getConfig().getStringList("ignore.others")) {
+            messages.remove(getLocalizedMessage(key));
+        }
 
-        localizedMessages = builder.build();
+        localizedMessages = ImmutableSet.copyOf(messages);
     }
 
-    private void loadingByIdentifier(ImmutableSet.Builder<String> builder) {
+    private void addOrRemove(Set<String> messages, String message, boolean ignore) {
+        if (ignore) {
+            messages.remove(message);
+        } else {
+            messages.add(message);
+        }
+    }
+
+    private void loadingByIdentifier(Set<String> builder) {
         ClassLoader classLoader = mcMMO.p.getClass().getClassLoader();
         ResourceBundle enBundle = ResourceBundle.getBundle(BUNDLE_ROOT, Locale.US, classLoader);
         for (Enumeration<String> enumeration = enBundle.getKeys(); enumeration.hasMoreElements();) {
@@ -123,8 +142,9 @@ public class mcMMOAction extends JavaPlugin {
         }
     }
 
-    private String getLocalizedMessage(String key, Object... messageArgs) {
-        String localizedMessage = LocaleLoader.getString(key, messageArgs);
+    private String getLocalizedMessage(String key) {
+        //if the message has less arguments they will be just ignored
+        String localizedMessage = LocaleLoader.getString(key, 0, 0, 0, 0);
         //strip color to match faster and easier
         String plainMessageText = ChatColor.stripColor(localizedMessage);
         //remove all numbers in order to match it with the sent message in general
