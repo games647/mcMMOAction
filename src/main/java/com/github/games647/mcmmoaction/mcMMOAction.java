@@ -30,8 +30,8 @@ public class mcMMOAction extends JavaPlugin {
     private static final String BUNDLE_ROOT = "com.gmail.nossr50.locale.locale";
     private static final String NOTIFCATION_IDENTIFIER = "**";
 
-    //compile the pattern just once
-    private final Pattern numberRemover = Pattern.compile("[0-9]");
+    //compile the pattern just once - remove the comma so it also detect numbers like (10,000)
+    private final Pattern numberRemover = Pattern.compile("[,0-9]");
     //create a immutable set in order to be thread-safe and faster than normal sets
     private ImmutableSet<String> localizedMessages;
 
@@ -106,11 +106,12 @@ public class mcMMOAction extends JavaPlugin {
         messages.add(getLocalizedMessage("Swords.Combat.Bleeding.Stopped"));
 
         //hardcore messages
-        addOrRemove(messages, getLocalizedMessage("Hardcore.DeathStatLoss.PlayerDeath"), getConfig().getBoolean("ignore.hardcore"));
-        addOrRemove(messages, getLocalizedMessage("Hardcore.Vampirism.Killer.Failure"), getConfig().getBoolean("ignore.hardcore"));
-        addOrRemove(messages, getLocalizedMessage("Hardcore.Vampirism.Killer.Success"), getConfig().getBoolean("ignore.hardcore"));
-        addOrRemove(messages, getLocalizedMessage("Hardcore.Vampirism.Victim.Failure"), getConfig().getBoolean("ignore.hardcore"));
-        addOrRemove(messages, getLocalizedMessage("Hardcore.Vampirism.Victim.Success"), getConfig().getBoolean("ignore.hardcore"));
+        boolean hardcoreIgnore = getConfig().getBoolean("ignore.hardcore");
+        addOrRemove(messages, getLocalizedMessage("Hardcore.DeathStatLoss.PlayerDeath"), hardcoreIgnore);
+        addOrRemove(messages, getLocalizedMessage("Hardcore.Vampirism.Killer.Failure"), hardcoreIgnore);
+        addOrRemove(messages, getLocalizedMessage("Hardcore.Vampirism.Killer.Success"), hardcoreIgnore);
+        addOrRemove(messages, getLocalizedMessage("Hardcore.Vampirism.Victim.Failure"), hardcoreIgnore);
+        addOrRemove(messages, getLocalizedMessage("Hardcore.Vampirism.Victim.Success"), hardcoreIgnore);
 
         //general message
         addOrRemove(messages, getLocalizedMessage("Skills.TooTired"), getConfig().getBoolean("ignore.tooTired"));
