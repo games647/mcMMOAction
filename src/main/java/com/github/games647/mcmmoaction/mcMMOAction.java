@@ -154,7 +154,7 @@ public class mcMMOAction extends JavaPlugin {
 
     private void loadConfig() {
         saveDefaultConfig();
-        String configCategory = "notificaiton-sound";
+        String configCategory = "notification-sound";
 
         soundEnabled = getConfig().getBoolean(configCategory + ".enabled");
         if (soundEnabled) {

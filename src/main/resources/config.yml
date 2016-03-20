@@ -1,7 +1,7 @@
 # mcMMOAction config
 
-# A notification soun if the mcMMO message will be displayed into the action bar slot
-notificaiton-sound:
+# A notification sound if the mcMMO message will be displayed into the action bar slot
+notification-sound:
     enabled: false
 
     # A list of all available sounds can be accessed here:
