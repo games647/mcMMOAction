@@ -9,6 +9,7 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 
+import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -36,7 +37,8 @@ public class MessageListener extends PacketAdapter {
 
         PacketContainer packet = packetEvent.getPacket();
         byte chatPosition = packet.getBytes().read(0);
-        if (chatPosition == NORMAL_CHAT_POSTION) {
+        Player player = packetEvent.getPlayer();
+        if (chatPosition == NORMAL_CHAT_POSTION && !plugin.getDisabledActionBar().contains(player.getUniqueId())) {
             WrappedChatComponent message = packet.getChatComponents().read(0);
             String json = message.getJson();
             String cleanedJson = JSONValue.toJSONString(cleanJsonFromHover(json));

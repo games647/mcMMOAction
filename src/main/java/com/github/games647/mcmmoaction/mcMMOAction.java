@@ -16,6 +16,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import java.util.Set;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
@@ -35,6 +36,8 @@ public class mcMMOAction extends JavaPlugin {
     //create a immutable set in order to be thread-safe and faster than normal sets
     private ImmutableSet<String> localizedMessages;
 
+    private final Set<UUID> disabledActionBar = Sets.newHashSet();
+
     //notification sound
     private boolean soundEnabled;
     private Sound sound;
@@ -47,12 +50,19 @@ public class mcMMOAction extends JavaPlugin {
 
         loadAllMessages();
 
+        getServer().getPluginManager().registerEvents(new QuitListener(this), this);
+        getCommand("action").setExecutor(new ToggleCommand(this));
+
         //the event could and should be executed async, but if we try to use it with other sync listeners
         //the sending order gets mixed up
 //        AsynchronousManager asyncManager = ProtocolLibrary.getProtocolManager().getAsynchronousManager();
 //        asyncManager.registerAsyncHandler(new MessageListener(this)).start();
         ProtocolManager protManager = ProtocolLibrary.getProtocolManager();
         protManager.addPacketListener(new MessageListener(this));
+    }
+
+    public Set<UUID> getDisabledActionBar() {
+        return disabledActionBar;
     }
 
     //this method has to be thread-safe
