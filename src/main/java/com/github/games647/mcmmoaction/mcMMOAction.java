@@ -112,7 +112,9 @@ public class mcMMOAction extends JavaPlugin {
         messages.add(getLocalizedMessage("Axes.Combat.CriticalHit"));
         messages.add(getLocalizedMessage("Axes.Combat.CritStruck"));
 
+        messages.add(getLocalizedMessage("Swords.Combat.Counter.Hit"));
         messages.add(getLocalizedMessage("Swords.Combat.Bleeding"));
+        messages.add(getLocalizedMessage("Swords.Combat.Bleeding.Started"));
         messages.add(getLocalizedMessage("Swords.Combat.Bleeding.Stopped"));
 
         //hardcore messages
@@ -126,6 +128,12 @@ public class mcMMOAction extends JavaPlugin {
         //general message
         addOrRemove(messages, getLocalizedMessage("Skills.TooTired"), getConfig().getBoolean("ignore.tooTired"));
 
+        //explicit added messages
+        for (String key : getConfig().getStringList("others")) {
+            messages.add(getLocalizedMessage(key));
+        }
+
+        //explicit ignored messages
         for (String key : getConfig().getStringList("ignore.others")) {
             messages.remove(getLocalizedMessage(key));
         }
