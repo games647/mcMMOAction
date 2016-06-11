@@ -18,7 +18,7 @@ the plugin in your plugins folder and start your server.
 * Ignore the messages you don't want to see in the action bar
 * Good performance - Messages are loaded only once in a fast collection
 
-## Supported messages
+## Supported messages (by default)
 
 * All skillup messages
 * Too tired message
@@ -26,6 +26,10 @@ the plugin in your plugins folder and start your server.
 * Tool raise and lower messages
 * Hardcore messages
 * Refresh message
+
+## Commands
+
+* /mcmmoaction - toggle the actionbar for mcmmo messages
 
 ## Dependencies
 
