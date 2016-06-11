@@ -26,15 +26,19 @@ public class ToggleCommand implements CommandExecutor {
             Set<UUID> disabledActionBar = plugin.getDisabledActionBar();
             if (disabledActionBar.contains(uniqueId)) {
                 disabledActionBar.remove(uniqueId);
-                sender.sendMessage(ChatColor.DARK_GREEN + "Notifications will be displayed in chat");
+                sendLocaleMessage(sender, "toggle-chat");
             } else {
                 disabledActionBar.add(uniqueId);
-                sender.sendMessage(ChatColor.DARK_GREEN + "You'll see notification in the action bar");
+                sendLocaleMessage(sender, "toggle-actionbar");
             }
         } else {
-            sender.sendMessage(ChatColor.DARK_RED + "Only players can see the actionbar");
+            sendLocaleMessage(sender, "no-console");
         }
 
         return true;
+    }
+
+    private void sendLocaleMessage(CommandSender sender, String key) {
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString(key)));
     }
 }
