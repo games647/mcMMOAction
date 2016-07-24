@@ -15,7 +15,7 @@ dev-url: ${project.url}
 depend: [ProtocolLib, mcMMO]
 
 commands:
-    mmmoaction:
+    mmoaction:
         description: 'Toggle if the invoker wants to receive the mcMMO message in chat or actionbar'
         aliases: [${project.artifactId}]
         permission: '${project.artifactId}.command.toggle'
