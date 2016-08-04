@@ -51,7 +51,7 @@ public class mcMMOAction extends JavaPlugin {
         loadAllMessages();
 
         getServer().getPluginManager().registerEvents(new QuitListener(this), this);
-        getCommand("mmmoaction").setExecutor(new ToggleCommand(this));
+        getCommand("mmoaction").setExecutor(new ToggleCommand(this));
 
         //the event could and should be executed async, but if we try to use it with other sync listeners
         //the sending order gets mixed up
