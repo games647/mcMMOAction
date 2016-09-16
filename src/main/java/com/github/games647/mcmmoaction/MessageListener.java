@@ -38,7 +38,8 @@ public class MessageListener extends PacketAdapter {
         PacketContainer packet = packetEvent.getPacket();
         byte chatPosition = packet.getBytes().read(0);
         Player player = packetEvent.getPlayer();
-        if (chatPosition == NORMAL_CHAT_POSTION && !plugin.getDisabledActionBar().contains(player.getUniqueId())) {
+        if (chatPosition == NORMAL_CHAT_POSTION && !plugin.getDisabledActionBar().contains(player.getUniqueId())
+                && player.hasPermission(plugin.getName() + ".display")) {
             WrappedChatComponent message = packet.getChatComponents().read(0);
             String json = message.getJson();
             String cleanedJson = JSONValue.toJSONString(cleanJsonFromHover(json));
@@ -82,16 +83,16 @@ public class MessageListener extends PacketAdapter {
     }
 
     private void removeHoverEvent(JSONArray components) {
-        for (Object component : components) {
-            if (component instanceof JSONObject) {
-                JSONObject jsonComponent = (JSONObject) component;
+        //due this issue: https://github.com/SpigotMC/BungeeCord/issues/1300 - there is a class missing
+//if this object has also extra or with components use them there too
+        components.stream().filter(component -> component instanceof JSONObject).forEach(component -> {
+            JSONObject jsonComponent = (JSONObject) component;
 
-                //due this issue: https://github.com/SpigotMC/BungeeCord/issues/1300 - there is a class missing
-                jsonComponent.remove("hoverEvent");
+            //due this issue: https://github.com/SpigotMC/BungeeCord/issues/1300 - there is a class missing
+            jsonComponent.remove("hoverEvent");
 
-                //if this object has also extra or with components use them there too
-                cleanJsonFromHover(jsonComponent);
-            }
-        }
+            //if this object has also extra or with components use them there too
+            cleanJsonFromHover(jsonComponent);
+        });
     }
 }

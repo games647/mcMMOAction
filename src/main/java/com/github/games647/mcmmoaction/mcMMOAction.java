@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -129,14 +130,13 @@ public class mcMMOAction extends JavaPlugin {
         addOrRemove(messages, getLocalizedMessage("Skills.TooTired"), getConfig().getBoolean("ignore.tooTired"));
 
         //explicit added messages
-        for (String key : getConfig().getStringList("others")) {
-            messages.add(getLocalizedMessage(key));
-        }
+        messages.addAll(getConfig().getStringList("others").stream()
+                .map(this::getLocalizedMessage).collect(Collectors.toList()));
 
         //explicit ignored messages
-        for (String key : getConfig().getStringList("ignore.others")) {
+        getConfig().getStringList("ignore.others").forEach((key) -> {
             messages.remove(getLocalizedMessage(key));
-        }
+        });
 
         localizedMessages = ImmutableSet.copyOf(messages);
     }
