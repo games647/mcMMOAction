@@ -26,10 +26,10 @@ public class ToggleCommand implements CommandExecutor {
             Set<UUID> disabledActionBar = plugin.getDisabledActionBar();
             if (disabledActionBar.contains(uniqueId)) {
                 disabledActionBar.remove(uniqueId);
-                sendLocaleMessage(sender, "toggle-chat");
+                sendLocaleMessage(sender, "toggle-actionbar");
             } else {
                 disabledActionBar.add(uniqueId);
-                sendLocaleMessage(sender, "toggle-actionbar");
+                sendLocaleMessage(sender, "toggle-chat");
             }
         } else {
             sendLocaleMessage(sender, "no-console");
