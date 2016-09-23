@@ -182,8 +182,8 @@ public class mcMMOAction extends JavaPlugin {
             String soundType = getConfig().getString(configCategory + ".type");
             try {
                 sound = Sound.valueOf(soundType.toUpperCase());
-            } catch (IllegalStateException illegalStateException) {
-                getLogger().log(Level.WARNING, "Failed to load the sound type", illegalStateException);
+            } catch (IllegalArgumentException illegalArgumentException) {
+                getLogger().log(Level.WARNING, "Failed to load the sound type", illegalArgumentException);
                 sound = null;
             }
         }
