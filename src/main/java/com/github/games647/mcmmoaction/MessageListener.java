@@ -41,6 +41,10 @@ public class MessageListener extends PacketAdapter {
         if (chatPosition == NORMAL_CHAT_POSTION && !plugin.getDisabledActionBar().contains(player.getUniqueId())
                 && player.hasPermission(plugin.getName().toLowerCase() + ".display")) {
             WrappedChatComponent message = packet.getChatComponents().read(0);
+            if (message == null) {
+                return;
+            }
+
             String json = message.getJson();
             String cleanedJson = JSONValue.toJSONString(cleanJsonFromHover(json));
             if (cleanedJson == null) {
