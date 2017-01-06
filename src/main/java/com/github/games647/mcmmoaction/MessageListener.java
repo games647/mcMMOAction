@@ -62,7 +62,7 @@ public class MessageListener extends PacketAdapter {
         }
     }
 
-    private JSONObject cleanJsonFromHover(String json) {
+    public static JSONObject cleanJsonFromHover(String json) {
         Object parseComponent = JSONValue.parse(json);
         if (parseComponent instanceof JSONObject) {
             JSONObject jsonComponent = (JSONObject) parseComponent;
@@ -72,7 +72,7 @@ public class MessageListener extends PacketAdapter {
         return null;
     }
 
-    private JSONObject cleanJsonFromHover(JSONObject jsonComponent) {
+    private static JSONObject cleanJsonFromHover(JSONObject jsonComponent) {
         JSONArray withComponents = (JSONArray) jsonComponent.get("with");
         JSONArray extraComponents = (JSONArray) jsonComponent.get("extra");
         if (withComponents != null) {
@@ -86,7 +86,7 @@ public class MessageListener extends PacketAdapter {
         return jsonComponent;
     }
 
-    private void removeHoverEvent(JSONArray components) {
+    private static void removeHoverEvent(JSONArray components) {
         //due this issue: https://github.com/SpigotMC/BungeeCord/issues/1300 - there is a class missing
 //if this object has also extra or with components use them there too
         components.stream().filter(component -> component instanceof JSONObject).forEach(component -> {

@@ -81,8 +81,7 @@ public class mcMMOAction extends JavaPlugin {
 
     private void loadAllMessages() {
         Set<String> messages = Sets.newHashSet();
-
-        loadingByIdentifier(messages);
+        messages.addAll(loadingByIdentifier());
 
         for (SkillType skillType : SkillType.values()) {
             if (!skillType.isChildSkill()) {
@@ -134,9 +133,7 @@ public class mcMMOAction extends JavaPlugin {
                 .map(this::getLocalizedMessage).collect(Collectors.toList()));
 
         //explicit ignored messages
-        getConfig().getStringList("ignore.others").forEach((key) -> {
-            messages.remove(getLocalizedMessage(key));
-        });
+        getConfig().getStringList("ignore.others").stream().map(this::getLocalizedMessage).forEach(messages::remove);
 
         localizedMessages = ImmutableSet.copyOf(messages);
     }
@@ -149,7 +146,9 @@ public class mcMMOAction extends JavaPlugin {
         }
     }
 
-    private void loadingByIdentifier(Set<String> builder) {
+    private Set<String> loadingByIdentifier() {
+        Set<String> builder = Sets.newHashSet();
+
         ClassLoader classLoader = mcMMO.p.getClass().getClassLoader();
         ResourceBundle enBundle = ResourceBundle.getBundle(BUNDLE_ROOT, Locale.US, classLoader);
         for (Enumeration<String> enumeration = enBundle.getKeys(); enumeration.hasMoreElements();) {
@@ -159,9 +158,11 @@ public class mcMMOAction extends JavaPlugin {
                 builder.add(localizedMessage);
             }
         }
+
+        return builder;
     }
 
-    private String getLocalizedMessage(String key) {
+    public String getLocalizedMessage(String key) {
         //if the message has less arguments they will be just ignored
         String localizedMessage = LocaleLoader.getString(key, 0, 0, 0, 0);
         //strip color to match faster and easier
