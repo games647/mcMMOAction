@@ -56,8 +56,6 @@ public class mcMMOAction extends JavaPlugin {
 
         //the event could and should be executed async, but if we try to use it with other sync listeners
         //the sending order gets mixed up
-//        AsynchronousManager asyncManager = ProtocolLibrary.getProtocolManager().getAsynchronousManager();
-//        asyncManager.registerAsyncHandler(new MessageListener(this)).start();
         ProtocolManager protManager = ProtocolLibrary.getProtocolManager();
         protManager.addPacketListener(new MessageListener(this));
     }
