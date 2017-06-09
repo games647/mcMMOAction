@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.wrappers.EnumWrappers.ChatType;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
@@ -17,6 +18,8 @@ import org.json.simple.JSONValue;
 
 public class MessageListener extends PacketAdapter {
 
+    private static final byte NORMAL_CHAT_POSTION = 1;
+    private static final byte ACTIONBAR_POSITION = 2;
     private static final String PLUGIN_TAG = "[mcMMO] ";
 
     private final mcMMOAction plugin;
@@ -34,14 +37,10 @@ public class MessageListener extends PacketAdapter {
         }
 
         PacketContainer packet = packetEvent.getPacket();
-        ChatType chatType = packet.getChatTypes().readSafely(0);
-        if (chatType == null) {
-            //< 1.12 minecraft version
-            chatType = ChatType.values()[packet.getBytes().read(0)];
-        }
 
+        byte chatType = readChatPosition(packet);
         Player player = packetEvent.getPlayer();
-        if (chatType == ChatType.SYSTEM
+        if (chatType == NORMAL_CHAT_POSTION
                 && !plugin.getDisabledActionBar().contains(player.getUniqueId())
                 && player.hasPermission(plugin.getName().toLowerCase() + ".display")) {
             WrappedChatComponent message = packet.getChatComponents().read(0);
@@ -57,8 +56,7 @@ public class MessageListener extends PacketAdapter {
 
             BaseComponent chatComponent = ComponentSerializer.parse(cleanedJson)[0];
             if (chatComponent != null && plugin.isMcmmoMessage(chatComponent.toPlainText())) {
-                packet.getBytes().writeSafely(0, ChatType.GAME_INFO.getId());
-                packet.getChatTypes().writeSafely(0, ChatType.GAME_INFO);
+                writeChatPosition(packet, ACTIONBAR_POSITION);
 
                 //action bar doesn't support the new chat features
                 String legacyText = chatComponent.toLegacyText().replace(PLUGIN_TAG, "");
@@ -68,7 +66,23 @@ public class MessageListener extends PacketAdapter {
         }
     }
 
-    public static JSONObject cleanJsonFromHover(String json) {
+    private byte readChatPosition(PacketContainer packet) {
+        if (MinecraftVersion.getCurrentVersion().compareTo(MinecraftVersion.EXPLORATION_UPDATE) <= 0) {
+            return packet.getBytes().read(0);
+        }
+
+        return packet.getChatTypes().read(0).getId();
+    }
+
+    private void writeChatPosition(PacketContainer packet, byte positionId) {
+        if (MinecraftVersion.getCurrentVersion().compareTo(MinecraftVersion.EXPLORATION_UPDATE) <= 0) {
+            packet.getBytes().writeSafely(0, positionId);
+        } else {
+            packet.getChatTypes().writeSafely(0, ChatType.values()[positionId]);
+        }
+    }
+
+    private static JSONObject cleanJsonFromHover(String json) {
         Object parseComponent = JSONValue.parse(json);
         if (parseComponent instanceof JSONObject) {
             JSONObject jsonComponent = (JSONObject) parseComponent;
