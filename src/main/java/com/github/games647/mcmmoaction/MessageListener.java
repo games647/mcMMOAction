@@ -23,6 +23,9 @@ public class MessageListener extends PacketAdapter {
     private static final String PLUGIN_TAG = "[mcMMO] ";
 
     private final mcMMOAction plugin;
+    private final MinecraftVersion currentVersion = MinecraftVersion.getCurrentVersion();
+    //in comparison to the ProtocolLib variant this includes the build number
+    private final MinecraftVersion explorationUpdate = new MinecraftVersion(1, 11, 2);
 
     public MessageListener(mcMMOAction plugin) {
         super(params().plugin(plugin).optionAsync().types(PacketType.Play.Server.CHAT));
@@ -67,7 +70,7 @@ public class MessageListener extends PacketAdapter {
     }
 
     private byte readChatPosition(PacketContainer packet) {
-        if (MinecraftVersion.getCurrentVersion().compareTo(MinecraftVersion.EXPLORATION_UPDATE) <= 0) {
+        if (currentVersion.compareTo(explorationUpdate) <= 0) {
             return packet.getBytes().read(0);
         }
 
@@ -75,7 +78,7 @@ public class MessageListener extends PacketAdapter {
     }
 
     private void writeChatPosition(PacketContainer packet, byte positionId) {
-        if (MinecraftVersion.getCurrentVersion().compareTo(MinecraftVersion.EXPLORATION_UPDATE) <= 0) {
+        if (currentVersion.compareTo(explorationUpdate) <= 0) {
             packet.getBytes().writeSafely(0, positionId);
         } else {
             packet.getChatTypes().writeSafely(0, ChatType.values()[positionId]);
@@ -120,5 +123,10 @@ public class MessageListener extends PacketAdapter {
                     //if this object has also extra or with components use them there too
                     cleanJsonFromHover(jsonComponent);
                 });
+    }
+
+    private boolean isNewer(MinecraftVersion other) {
+        return currentVersion.getMajor() >= other.getMajor();
+
     }
 }
