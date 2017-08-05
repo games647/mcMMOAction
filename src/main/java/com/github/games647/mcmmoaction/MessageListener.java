@@ -113,7 +113,7 @@ public class MessageListener extends PacketAdapter {
         //due this issue: https://github.com/SpigotMC/BungeeCord/issues/1300 - there is a class missing
         //if this object has also extra or with components use them there too
         components.stream()
-                .filter(component -> component instanceof JSONObject)
+                .filter(JSONObject.class::isInstance)
                 .forEach(component -> {
                     JSONObject jsonComponent = (JSONObject) component;
 
