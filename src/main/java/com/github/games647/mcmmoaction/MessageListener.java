@@ -70,18 +70,18 @@ public class MessageListener extends PacketAdapter {
     }
 
     private byte readChatPosition(PacketContainer packet) {
-        if (currentVersion.compareTo(explorationUpdate) <= 0) {
-            return packet.getBytes().read(0);
+        if (supportsChatTypeEnum()) {
+            return packet.getChatTypes().read(0).getId();
         }
 
-        return packet.getChatTypes().read(0).getId();
+        return packet.getBytes().read(0);
     }
 
     private void writeChatPosition(PacketContainer packet, byte positionId) {
-        if (currentVersion.compareTo(explorationUpdate) <= 0) {
-            packet.getBytes().writeSafely(0, positionId);
-        } else {
+        if (supportsChatTypeEnum()) {
             packet.getChatTypes().writeSafely(0, ChatType.values()[positionId]);
+        } else {
+            packet.getBytes().writeSafely(0, positionId);
         }
     }
 
@@ -125,8 +125,7 @@ public class MessageListener extends PacketAdapter {
                 });
     }
 
-    private boolean isNewer(MinecraftVersion other) {
-        return currentVersion.getMajor() >= other.getMajor();
-
+    private boolean supportsChatTypeEnum() {
+        return currentVersion.compareTo(explorationUpdate) > 0;
     }
 }

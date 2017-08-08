@@ -114,6 +114,8 @@ public class mcMMOAction extends JavaPlugin {
         messages.add(getLocalizedMessage("Swords.Combat.Bleeding.Started"));
         messages.add(getLocalizedMessage("Swords.Combat.Bleeding.Stopped"));
 
+        messages.add(getLocalizedMessage("Party.LevelUp"));
+
         //hardcore messages
         boolean hardcoreIgnore = getConfig().getBoolean("ignore.hardcore");
         addOrRemove(messages, getLocalizedMessage("Hardcore.DeathStatLoss.PlayerDeath"), hardcoreIgnore);
