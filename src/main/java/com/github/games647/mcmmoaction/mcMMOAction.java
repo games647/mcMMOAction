@@ -29,7 +29,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class mcMMOAction extends JavaPlugin {
 
     private static final String BUNDLE_ROOT = "com.gmail.nossr50.locale.locale";
-    private static final String NOTIFCATION_IDENTIFIER = "**";
+    private static final String NOTIFICATION_IDENTIFIER = "**";
 
     //compile the pattern just once - remove the comma so it also detect numbers like (10,000)
     private final Pattern numberRemover = Pattern.compile("[,0-9]");
@@ -102,7 +102,7 @@ public class mcMMOAction extends JavaPlugin {
             }
         }
 
-        //messages that cannot be retrieved dynmaically because the message key isn't in (or equal as)
+        //messages that cannot be retrieved dynamically because the message key isn't in (or equal as)
         //the enum getSkillAbilities() - SecondaryAbilities
         messages.add(getLocalizedMessage("Axes.Combat.SS.Struck"));
 
@@ -153,7 +153,7 @@ public class mcMMOAction extends JavaPlugin {
         for (Enumeration<String> enumeration = enBundle.getKeys(); enumeration.hasMoreElements();) {
             String key = enumeration.nextElement();
             String localizedMessage = getLocalizedMessage(key);
-            if (localizedMessage.endsWith(NOTIFCATION_IDENTIFIER)) {
+            if (localizedMessage.endsWith(NOTIFICATION_IDENTIFIER)) {
                 builder.add(localizedMessage);
             }
         }

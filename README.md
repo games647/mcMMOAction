@@ -1,6 +1,6 @@
 # mcMMOAction
 
-![Actionbar messages](http://i.imgur.com/QYvRTRA.png)
+![Actionbar messages](https://i.imgur.com/QYvRTRA.png)
 
 ## Description
 
@@ -33,5 +33,5 @@ the plugin in your plugins folder and start your server.
 
 ## Dependencies
 
-* [ProtocolLib](http://dev.bukkit.org/bukkit-plugins/protocollib)
-* [mcMMO](http://dev.bukkit.org/bukkit-plugins/mcmmo)
+* [ProtocolLib](https://dev.bukkit.org/bukkit-plugins/protocollib)
+* [mcMMO](https://dev.bukkit.org/bukkit-plugins/mcmmo)

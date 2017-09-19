@@ -1,12 +1,13 @@
 package com.github.games647.mcmmoaction;
 
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.wrappers.EnumWrappers.ChatType;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+
+import java.util.regex.Pattern;
 
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
@@ -16,19 +17,24 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import static com.comphenix.protocol.PacketType.Play.Server.CHAT;
+
 public class MessageListener extends PacketAdapter {
 
-    private static final byte NORMAL_CHAT_POSTION = 1;
+    private static final byte NORMAL_CHAT_POSITION = 1;
     private static final byte ACTIONBAR_POSITION = 2;
     private static final String PLUGIN_TAG = "[mcMMO] ";
 
     private final mcMMOAction plugin;
+
+    private final Pattern pluginTagPattern = Pattern.compile(PLUGIN_TAG);
+
     private final MinecraftVersion currentVersion = MinecraftVersion.getCurrentVersion();
     //in comparison to the ProtocolLib variant this includes the build number
     private final MinecraftVersion explorationUpdate = new MinecraftVersion(1, 11, 2);
 
     public MessageListener(mcMMOAction plugin) {
-        super(params().plugin(plugin).optionAsync().types(PacketType.Play.Server.CHAT));
+        super(params().plugin(plugin).optionAsync().types(CHAT));
 
         this.plugin = plugin;
     }
@@ -43,7 +49,7 @@ public class MessageListener extends PacketAdapter {
 
         byte chatType = readChatPosition(packet);
         Player player = packetEvent.getPlayer();
-        if (chatType == NORMAL_CHAT_POSTION
+        if (chatType == NORMAL_CHAT_POSITION
                 && !plugin.getDisabledActionBar().contains(player.getUniqueId())
                 && player.hasPermission(plugin.getName().toLowerCase() + ".display")) {
             WrappedChatComponent message = packet.getChatComponents().read(0);
@@ -62,7 +68,7 @@ public class MessageListener extends PacketAdapter {
                 writeChatPosition(packet, ACTIONBAR_POSITION);
 
                 //action bar doesn't support the new chat features
-                String legacyText = chatComponent.toLegacyText().replace(PLUGIN_TAG, "");
+                String legacyText = pluginTagPattern.matcher(chatComponent.toLegacyText()).replaceFirst("");
                 packet.getChatComponents().write(0, WrappedChatComponent.fromText(legacyText));
                 plugin.playNotificationSound(packetEvent.getPlayer());
             }

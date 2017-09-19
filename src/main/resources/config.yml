@@ -37,7 +37,7 @@ ignore:
     # Explicit ignore specific messages by adding the message key here
     # For example this makes it possible to show all levelup messages in the action except for excavation
 
-    # Furthermore messages are added if the message ends with '**' - It looks like these message are inteded to be
+    # Furthermore messages are added if the message ends with '**' - It looks like these message are intended to be
     # a notification
 
     # You can see all messages with it's keys here:

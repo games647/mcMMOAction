@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
 
     <name>mcMMOAction</name>
-    <version>1.4</version>
+    <version>1.5</version>
     <inceptionYear>2016</inceptionYear>
     <url>https://dev.bukkit.org/bukkit-plugins/mcmmoaction/</url>
     <description>
@@ -17,24 +17,15 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
     <build>
         <defaultGoal>install</defaultGoal>
         <!--Just use the project name to replace an old version of the plugin if the user does only copy-paste-->
         <finalName>${project.name}</finalName>
-
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.1</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-        </plugins>
 
         <resources>
             <resource>
@@ -70,14 +61,14 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.12-R0.1-SNAPSHOT</version>
+            <version>1.12.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
         <!--Library for listening and sending Minecraft packets-->
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
-            <artifactId>ProtocolLib</artifactId>
+            <artifactId>ProtocolLib-API</artifactId>
             <version>4.3.0</version>
             <optional>true</optional>
         </dependency>
