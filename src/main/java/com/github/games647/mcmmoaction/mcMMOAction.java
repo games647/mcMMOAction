@@ -38,6 +38,10 @@ public class mcMMOAction extends JavaPlugin {
         return disabledActionBar;
     }
 
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
     public void playNotificationSound(Player player) {
         Sound sound = configuration.getSoundType();
         if (sound != null) {

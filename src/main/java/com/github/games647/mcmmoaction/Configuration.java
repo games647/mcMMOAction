@@ -34,6 +34,7 @@ public class Configuration {
     private Sound sound;
     private float volume;
     private float pitch;
+    private boolean progressEnabled;
 
     public Configuration(mcMMOAction plugin) {
         this.plugin = plugin;
@@ -48,6 +49,8 @@ public class Configuration {
 
         loadMessages(config);
         loadNotificationSound(config);
+
+        progressEnabled = plugin.getConfig().getBoolean("progress");
     }
 
     private void loadNotificationSound(FileConfiguration config) {
@@ -169,5 +172,9 @@ public class Configuration {
 
     public Set<String> getMessages() {
         return messages;
+    }
+
+    public boolean isProgressEnabled() {
+        return progressEnabled;
     }
 }

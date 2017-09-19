@@ -45,6 +45,18 @@ ignore:
     others:
         - Ability.Generic.Refresh
 
+# Should a message be displayed in the action bar every time the player gain skill experience
+progress: false
+
+# What message should be displayed if the above option is activated
+# Supported variables are:
+# * {skill-type} - skill type
+# * {exp} - Current experience
+# * {exp-remaining} - Remaining experience for the next level
+# * {current-lvl} - Current skill level
+# * {next-lvl} - Next skill level
+progress-msg: '&a{skill-type}: &b{exp}&f/&c{exp-remaining} &f| &3Lv: &b{current-lvl}'
+
 # User deactivated mcMMOAction, so message will be displayed in chat
 toggle-chat: '&2Notifications will be displayed in chat'
 
