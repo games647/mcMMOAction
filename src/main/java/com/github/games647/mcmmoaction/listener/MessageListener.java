@@ -1,4 +1,4 @@
-package com.github.games647.mcmmoaction;
+package com.github.games647.mcmmoaction.listener;
 
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
@@ -6,8 +6,12 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.wrappers.EnumWrappers.ChatType;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.github.games647.mcmmoaction.mcMMOAction;
+import com.google.common.collect.ImmutableSet;
 
+import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
@@ -22,7 +26,7 @@ import static com.comphenix.protocol.PacketType.Play.Server.CHAT;
 public class MessageListener extends PacketAdapter {
 
     private static final byte NORMAL_CHAT_POSITION = 1;
-    private static final byte ACTIONBAR_POSITION = 2;
+    private static final byte ACTION_BAR_POSITION = 2;
     private static final String PLUGIN_TAG = "[mcMMO] ";
 
     private final mcMMOAction plugin;
@@ -33,10 +37,20 @@ public class MessageListener extends PacketAdapter {
     //in comparison to the ProtocolLib variant this includes the build number
     private final MinecraftVersion explorationUpdate = new MinecraftVersion(1, 11, 2);
 
-    public MessageListener(mcMMOAction plugin) {
+    //compile the pattern just once - remove the comma so it also detect numbers like (10,000)
+    private final Pattern numberRemover = Pattern.compile("[,0-9]");
+
+    //create a immutable set in order to be thread-safe and faster than normal sets
+    private ImmutableSet<String> localizedMessages;
+
+    public MessageListener(mcMMOAction plugin, Set<String> messages) {
         super(params().plugin(plugin).optionAsync().types(CHAT));
 
         this.plugin = plugin;
+        this.localizedMessages = ImmutableSet.copyOf(messages
+                .stream()
+                .map(message -> numberRemover.matcher(message).replaceAll(""))
+                .collect(Collectors.toSet()));
     }
 
     @Override
@@ -64,15 +78,21 @@ public class MessageListener extends PacketAdapter {
             }
 
             BaseComponent chatComponent = ComponentSerializer.parse(cleanedJson)[0];
-            if (chatComponent != null && plugin.isMcmmoMessage(chatComponent.toPlainText())) {
-                writeChatPosition(packet, ACTIONBAR_POSITION);
+            if (chatComponent != null && isMcmmoMessage(chatComponent.toPlainText())) {
+                writeChatPosition(packet, ACTION_BAR_POSITION);
 
                 //action bar doesn't support the new chat features
                 String legacyText = pluginTagPattern.matcher(chatComponent.toLegacyText()).replaceFirst("");
                 packet.getChatComponents().write(0, WrappedChatComponent.fromText(legacyText));
-                plugin.playNotificationSound(packetEvent.getPlayer());
+                plugin.playNotificationSound(player);
             }
         }
+    }
+
+    private boolean isMcmmoMessage(String plainText) {
+        //remove the numbers to match the string easier
+        String cleanedMessage = numberRemover.matcher(plainText).replaceAll("");
+        return localizedMessages.contains(cleanedMessage);
     }
 
     private byte readChatPosition(PacketContainer packet) {

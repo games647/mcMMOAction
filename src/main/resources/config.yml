@@ -23,7 +23,7 @@ others:
 # What messages should be ignored by this plugin.
 # Theses messages will be displayed in the normal chat window
 ignore:
-    # Skill levelup messages
+    # Skill level-up messages
     levelup: false
     # Tool raise or lower like **YOU LOWER YOUR SHOVEL**
     tool: false
@@ -35,7 +35,7 @@ ignore:
     # or Vampire success and failure messages
     hardcore: false
     # Explicit ignore specific messages by adding the message key here
-    # For example this makes it possible to show all levelup messages in the action except for excavation
+    # For example this makes it possible to show all level-up messages in the action except for excavation
 
     # Furthermore messages are added if the message ends with '**' - It looks like these message are intended to be
     # a notification
@@ -48,8 +48,8 @@ ignore:
 # User deactivated mcMMOAction, so message will be displayed in chat
 toggle-chat: '&2Notifications will be displayed in chat'
 
-# User now sees the messages in the actionbar
+# User now sees the messages in the action-bar
 toggle-actionbar: "&2You'll see notification in the action bar"
 
 # Only players are allowed to execute the toggle command
-no-console: '&4Only players can see the actionbar'
+no-console: '&4Only players can see the action-bar'

@@ -16,7 +16,7 @@ depend: [ProtocolLib, mcMMO]
 
 commands:
     mmoaction:
-        description: 'Toggle if the invoker wants to receive the mcMMO message in chat or actionbar'
+        description: 'Toggle if the invoker wants to receive the mcMMO message in chat or action-bar'
         aliases: [${project.artifactId}]
         permission: '${project.artifactId}.command.toggle'
 

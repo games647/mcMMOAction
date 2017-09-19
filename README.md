@@ -1,12 +1,12 @@
 # mcMMOAction
 
-![Actionbar messages](https://i.imgur.com/QYvRTRA.png)
+![Action-bar messages](https://i.imgur.com/QYvRTRA.png)
 
 ## Description
 
 This lightweight plugin is based on the feature request from [here](https://github.com/mcMMO-Dev/mcMMO/issues/2659).
 It forwards some useful mcMMO messages to the action chat. Instead that these messages spam the regular chat,
-you'll see them above the itembar and they will disappear after a shorten time. This plugin has no config. Just drop
+you'll see them above the item-bar and they will disappear after a shorten time. This plugin has no config. Just drop
 the plugin in your plugins folder and start your server.
 
 ## Features
@@ -20,16 +20,18 @@ the plugin in your plugins folder and start your server.
 
 ## Supported messages (by default)
 
-* All skillup messages
+* All skill level-up messages
 * Too tired message
 * Ability activate and deactivate messages
 * Tool raise and lower messages
 * Hardcore messages
 * Refresh message
+* Party level-up
+* 
 
 ## Commands
 
-* /mcmmoaction - toggle the actionbar for mcmmo messages
+* /mcmmoaction - toggle the action-bar for mcMMO messages
 
 ## Dependencies
 

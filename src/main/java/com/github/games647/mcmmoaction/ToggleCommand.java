@@ -39,6 +39,7 @@ public class ToggleCommand implements CommandExecutor {
     }
 
     private void sendLocaleMessage(CommandSender sender, String key) {
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString(key)));
+        String message = ChatColor.translateAlternateColorCodes('&', plugin.getConfig().getString(key));
+        sender.sendMessage(message);
     }
 }
