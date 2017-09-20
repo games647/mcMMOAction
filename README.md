@@ -12,22 +12,24 @@ the plugin in your plugins folder and start your server.
 ## Features
 
 * Lightweight
-* Sound when receiving a notification
+* Notification sound for new messages (except progress)
 * Support many mcMMO messages
 * Supports localized messages
 * Ignore the messages you don't want to see in the action bar
+* Shows progress message if the user gains skill experience
 * Good performance - Messages are loaded only once in a fast collection
 
 ## Supported messages (by default)
 
-* All skill level-up messages
+* All skill messages:
+    * level-up
+    * ability activate and deactivate
+    * tool raise and lower
 * Too tired message
-* Ability activate and deactivate messages
-* Tool raise and lower messages
 * Hardcore messages
 * Refresh message
 * Party level-up
-* 
+* Combat abilities (i.e. swords bleeding)
 
 ## Commands
 
