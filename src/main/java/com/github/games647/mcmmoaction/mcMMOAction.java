@@ -2,22 +2,37 @@ package com.github.games647.mcmmoaction;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.utility.MinecraftVersion;
+import com.comphenix.protocol.wrappers.EnumWrappers.ChatType;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.github.games647.mcmmoaction.listener.MessageListener;
 import com.github.games647.mcmmoaction.listener.PlayerListener;
 import com.google.common.collect.Sets;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
+
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import static com.comphenix.protocol.PacketType.Play.Server.CHAT;
+
 public class mcMMOAction extends JavaPlugin {
 
-    private final Set<UUID> disabledActionBar = Sets.newHashSet();
+    private final Set<UUID> disabledActionBar = Sets.newConcurrentHashSet();
 
     private Configuration configuration;
+
+    private final MinecraftVersion currentVersion = MinecraftVersion.getCurrentVersion();
+    //in comparison to the ProtocolLib variant this includes the build number
+    private final MinecraftVersion explorationUpdate = new MinecraftVersion(1, 11, 2);
 
     @Override
     public void onEnable() {
@@ -49,5 +64,38 @@ public class mcMMOAction extends JavaPlugin {
             float pitch = configuration.getPitch();
             player.playSound(player.getLocation(), sound, volume, pitch);
         }
+    }
+
+    /**
+     * Sends the action bar message using packets in order to be compatible with 1.8
+     *
+     * @param receiver the receiver of this message
+     * @param message the message content
+     */
+    public void sendActionMessage(Player receiver, String message) {
+        if (supportsChatTypeEnum()) {
+            //the API for this action bar message is available and we could use it
+            receiver.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+            return;
+        }
+
+        ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+        PacketContainer chatPacket = protocolManager.createPacket(CHAT);
+
+        chatPacket.getChatComponents().write(0, WrappedChatComponent.fromText(message));
+        chatPacket.getBytes().write(0, ChatType.GAME_INFO.getId());
+
+        //ignore our own packets
+        chatPacket.addMetadata(getName(), true);
+
+        try {
+            protocolManager.sendServerPacket(receiver, chatPacket);
+        } catch (InvocationTargetException invokeEx) {
+            getLogger().log(Level.WARNING, "Failed to send action bar message", invokeEx);
+        }
+    }
+
+    public boolean supportsChatTypeEnum() {
+        return currentVersion.compareTo(explorationUpdate) > 0;
     }
 }

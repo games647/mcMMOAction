@@ -3,7 +3,6 @@ package com.github.games647.mcmmoaction.listener;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.wrappers.EnumWrappers.ChatType;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.github.games647.mcmmoaction.mcMMOAction;
@@ -25,17 +24,11 @@ import static com.comphenix.protocol.PacketType.Play.Server.CHAT;
 
 public class MessageListener extends PacketAdapter {
 
-    private static final byte NORMAL_CHAT_POSITION = 1;
-    private static final byte ACTION_BAR_POSITION = 2;
     private static final String PLUGIN_TAG = "[mcMMO] ";
 
     private final mcMMOAction plugin;
 
     private final Pattern pluginTagPattern = Pattern.compile(PLUGIN_TAG);
-
-    private final MinecraftVersion currentVersion = MinecraftVersion.getCurrentVersion();
-    //in comparison to the ProtocolLib variant this includes the build number
-    private final MinecraftVersion explorationUpdate = new MinecraftVersion(1, 11, 2);
 
     //compile the pattern just once - remove the comma so it also detect numbers like (10,000)
     private final Pattern numberRemover = Pattern.compile("[,0-9]");
@@ -55,59 +48,61 @@ public class MessageListener extends PacketAdapter {
 
     @Override
     public void onPacketSending(PacketEvent packetEvent) {
-        if (packetEvent.isCancelled()) {
+        PacketContainer packet = packetEvent.getPacket();
+        if (packetEvent.isCancelled() || packet.hasMetadata(plugin.getName())) {
             return;
         }
 
-        PacketContainer packet = packetEvent.getPacket();
-
-        byte chatType = readChatPosition(packet);
+        ChatType chatType = readChatPosition(packet);
         Player player = packetEvent.getPlayer();
-        if (chatType == NORMAL_CHAT_POSITION
-                && !plugin.getDisabledActionBar().contains(player.getUniqueId())
-                && player.hasPermission(plugin.getName().toLowerCase() + ".display")) {
-            WrappedChatComponent message = packet.getChatComponents().read(0);
-            if (message == null) {
-                return;
-            }
+        if (chatType != ChatType.SYSTEM
+                || plugin.getDisabledActionBar().contains(player.getUniqueId())
+                || !player.hasPermission(plugin.getName().toLowerCase() + ".display")) {
+            return;
+        }
 
-            String json = message.getJson();
-            String cleanedJson = JSONValue.toJSONString(cleanJsonFromHover(json));
-            if (cleanedJson == null) {
-                return;
-            }
+        WrappedChatComponent message = packet.getChatComponents().read(0);
+        if (message == null) {
+            return;
+        }
 
-            BaseComponent chatComponent = ComponentSerializer.parse(cleanedJson)[0];
-            if (chatComponent != null && isMcmmoMessage(chatComponent.toPlainText())) {
-                writeChatPosition(packet, ACTION_BAR_POSITION);
+        String json = message.getJson();
+        String cleanedJson = JSONValue.toJSONString(cleanJsonFromHover(json));
+        if (cleanedJson == null) {
+            return;
+        }
 
-                //action bar doesn't support the new chat features
-                String legacyText = pluginTagPattern.matcher(chatComponent.toLegacyText()).replaceFirst("");
-                packet.getChatComponents().write(0, WrappedChatComponent.fromText(legacyText));
-                plugin.playNotificationSound(player);
-            }
+        BaseComponent chatComponent = ComponentSerializer.parse(cleanedJson)[0];
+        if (chatComponent != null && isMcMMOMessage(chatComponent.toPlainText())) {
+            writeChatPosition(packet, ChatType.GAME_INFO);
+
+            //action bar doesn't support the new chat features
+            String legacyText = pluginTagPattern.matcher(chatComponent.toLegacyText()).replaceFirst("");
+            packet.getChatComponents().write(0, WrappedChatComponent.fromText(legacyText));
+            plugin.playNotificationSound(player);
         }
     }
 
-    private boolean isMcmmoMessage(String plainText) {
+    private boolean isMcMMOMessage(String plainText) {
         //remove the numbers to match the string easier
         String cleanedMessage = numberRemover.matcher(plainText).replaceAll("");
         return localizedMessages.contains(cleanedMessage);
     }
 
-    private byte readChatPosition(PacketContainer packet) {
-        if (supportsChatTypeEnum()) {
-            return packet.getChatTypes().read(0).getId();
+    private ChatType readChatPosition(PacketContainer packet) {
+        if (plugin.supportsChatTypeEnum()) {
+            return packet.getChatTypes().read(0);
         }
 
-        return packet.getBytes().read(0);
+        byte positionId = packet.getBytes().read(0);
+        return ChatType.values()[positionId];
     }
 
-    private void writeChatPosition(PacketContainer packet, byte positionId) {
-        if (supportsChatTypeEnum()) {
-            packet.getChatTypes().writeSafely(0, ChatType.values()[positionId]);
+    private void writeChatPosition(PacketContainer packet, ChatType position) {
+        if (plugin.supportsChatTypeEnum()) {
+            packet.getChatTypes().writeSafely(0, position);
         } else {
-            packet.getBytes().writeSafely(0, positionId);
+            packet.getBytes().writeSafely(0, position.getId());
         }
     }
 
@@ -149,9 +144,5 @@ public class MessageListener extends PacketAdapter {
                     //if this object has also extra or with components use them there too
                     cleanJsonFromHover(jsonComponent);
                 });
-    }
-
-    private boolean supportsChatTypeEnum() {
-        return currentVersion.compareTo(explorationUpdate) > 0;
     }
 }

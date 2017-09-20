@@ -5,15 +5,11 @@ import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 
-import net.md_5.bungee.api.chat.TextComponent;
-
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
-
-import static net.md_5.bungee.api.ChatMessageType.ACTION_BAR;
 
 public class PlayerListener implements Listener {
 
@@ -38,7 +34,7 @@ public class PlayerListener implements Listener {
             Player player = experienceEvent.getPlayer();
             coloredMessage = replaceVariables(experienceEvent, coloredMessage, player);
 
-            player.spigot().sendMessage(ACTION_BAR, TextComponent.fromLegacyText(coloredMessage));
+            plugin.sendActionMessage(player, coloredMessage);
         }
     }
 
