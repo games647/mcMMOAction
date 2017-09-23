@@ -7,8 +7,11 @@ import com.comphenix.protocol.wrappers.EnumWrappers.ChatType;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.github.games647.mcmmoaction.mcMMOAction;
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
-import java.util.Set;
+import java.util.Collection;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -16,9 +19,6 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 
 import org.bukkit.entity.Player;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
 import static com.comphenix.protocol.PacketType.Play.Server.CHAT;
 
@@ -27,16 +27,16 @@ public class MessageListener extends PacketAdapter {
     private static final String PLUGIN_TAG = "[mcMMO] ";
 
     private final mcMMOAction plugin;
-
     private final Pattern pluginTagPattern = Pattern.compile(PLUGIN_TAG);
+    private final Gson gson = new Gson();
 
     //compile the pattern just once - remove the comma so it also detect numbers like (10,000)
     private final Pattern numberRemover = Pattern.compile("[,0-9]");
 
     //create a immutable set in order to be thread-safe and faster than normal sets
-    private ImmutableSet<String> localizedMessages;
+    private final ImmutableSet<String> localizedMessages;
 
-    public MessageListener(mcMMOAction plugin, Set<String> messages) {
+    public MessageListener(mcMMOAction plugin, Collection<String> messages) {
         super(params().plugin(plugin).optionAsync().types(CHAT));
 
         this.plugin = plugin;
@@ -67,7 +67,7 @@ public class MessageListener extends PacketAdapter {
         }
 
         String json = message.getJson();
-        String cleanedJson = JSONValue.toJSONString(cleanJsonFromHover(json));
+        String cleanedJson = gson.toJson(cleanJsonFromHover(json));
         if (cleanedJson == null) {
             return;
         }
@@ -106,43 +106,30 @@ public class MessageListener extends PacketAdapter {
         }
     }
 
-    private static JSONObject cleanJsonFromHover(String json) {
-        Object parseComponent = JSONValue.parse(json);
-        if (parseComponent instanceof JSONObject) {
-            JSONObject jsonComponent = (JSONObject) parseComponent;
-            return cleanJsonFromHover(jsonComponent);
-        }
-
-        return null;
+    private JsonObject cleanJsonFromHover(String json) {
+        JsonObject jsonComponent = gson.fromJson(json, JsonObject.class);
+        return cleanJsonFromHover(jsonComponent);
     }
 
-    private static JSONObject cleanJsonFromHover(JSONObject jsonComponent) {
-        JSONArray withComponents = (JSONArray) jsonComponent.get("with");
-        JSONArray extraComponents = (JSONArray) jsonComponent.get("extra");
-        if (withComponents != null) {
-            removeHoverEvent(withComponents);
+    private JsonObject cleanJsonFromHover(JsonObject jsonComponent) {
+        if (jsonComponent.has("extra")) {
+            removeHoverEvent(jsonComponent.getAsJsonArray("extra"));
         }
 
-        if (extraComponents != null) {
-            removeHoverEvent(extraComponents);
-        }
-
+        jsonComponent.remove("with");
         return jsonComponent;
     }
 
-    private static void removeHoverEvent(JSONArray components) {
+    private void removeHoverEvent(JsonArray components) {
         //due this issue: https://github.com/SpigotMC/BungeeCord/issues/1300 - there is a class missing
-        //if this object has also extra or with components use them there too
-        components.stream()
-                .filter(JSONObject.class::isInstance)
-                .forEach(component -> {
-                    JSONObject jsonComponent = (JSONObject) component;
+        components.forEach(jsonElement -> {
+            if (jsonElement.isJsonObject()) {
+                JsonObject jsonObject = jsonElement.getAsJsonObject();
+                jsonObject.remove("hoverEvent");
 
-                    //due this issue: https://github.com/SpigotMC/BungeeCord/issues/1300 - there is a class missing
-                    jsonComponent.remove("hoverEvent");
-
-                    //if this object has also extra or with components use them there too
-                    cleanJsonFromHover(jsonComponent);
-                });
+                //if this object has also extra or with components use them there too
+                cleanJsonFromHover(jsonObject);
+            }
+        });
     }
 }

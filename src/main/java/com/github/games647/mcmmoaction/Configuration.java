@@ -6,8 +6,11 @@ import com.gmail.nossr50.datatypes.skills.ToolType;
 import com.gmail.nossr50.locale.LocaleLoader;
 import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.util.StringUtils;
+import com.google.common.base.Enums;
+import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -48,28 +51,28 @@ public class Configuration {
         FileConfiguration config = plugin.getConfig();
 
         loadMessages(config);
-        loadNotificationSound(config);
+        loadNotificationSound(config.getConfigurationSection("notification-sound"));
 
         progressEnabled = plugin.getConfig().getBoolean("progress");
     }
 
-    private void loadNotificationSound(FileConfiguration config) {
-        ConfigurationSection soundCategory = config.getConfigurationSection("notification-sound");
-        if (soundCategory.getBoolean("enabled")) {
-            volume = (float) soundCategory.getDouble("volume");
-            pitch = (float) soundCategory.getDouble("pitch");
+    private void loadNotificationSound(ConfigurationSection section) {
+        if (section.getBoolean("enabled")) {
+            volume = (float) section.getDouble("volume");
+            pitch = (float) section.getDouble("pitch");
 
-            String soundType = soundCategory.getString("type");
-            try {
-                sound = Sound.valueOf(soundType.toUpperCase());
-            } catch (IllegalArgumentException illegalArgumentException) {
-                plugin.getLogger().log(Level.WARNING, "Failed to load the sound type", illegalArgumentException);
+            String soundType = section.getString("type");
+            Optional<Sound> sound = Enums.getIfPresent(Sound.class, soundType.toUpperCase());
+            if (sound.isPresent()) {
+                this.sound = sound.get();
+            } else {
+                plugin.getLogger().log(Level.WARNING, "Failed to load the sound type");
                 sound = null;
             }
         }
     }
 
-    private void loadMessages(FileConfiguration config) {
+    private void loadMessages(ConfigurationSection config) {
         messages.addAll(loadingByIdentifier());
 
         for (SkillType skillType : SkillType.values()) {
@@ -127,7 +130,7 @@ public class Configuration {
         config.getStringList("ignore.others").stream().map(this::getLocalizedMessage).forEach(messages::remove);
     }
 
-    private void addOrRemove(Set<String> messages, String message, boolean ignore) {
+    private void addOrRemove(Collection<String> messages, String message, boolean ignore) {
         if (ignore) {
             messages.remove(message);
         } else {
@@ -135,12 +138,12 @@ public class Configuration {
         }
     }
 
-    private Set<String> loadingByIdentifier() {
+    private Collection<String> loadingByIdentifier() {
         Set<String> builder = Sets.newHashSet();
 
         ClassLoader classLoader = mcMMO.p.getClass().getClassLoader();
         ResourceBundle enBundle = ResourceBundle.getBundle(BUNDLE_ROOT, Locale.US, classLoader);
-        for (Enumeration<String> enumeration = enBundle.getKeys(); enumeration.hasMoreElements();) {
+        for (Enumeration<String> enumeration = enBundle.getKeys(); enumeration.hasMoreElements(); ) {
             String key = enumeration.nextElement();
             String localizedMessage = getLocalizedMessage(key);
             if (localizedMessage.endsWith(NOTIFICATION_IDENTIFIER)) {
