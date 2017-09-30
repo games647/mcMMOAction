@@ -30,8 +30,7 @@ public class Configuration {
     private static final String NOTIFICATION_IDENTIFIER = "**";
 
     private final mcMMOAction plugin;
-
-    private Set<String> messages = Sets.newHashSet();
+    private final Set<String> messages = Sets.newHashSet();
 
     //notification sound
     private Sound sound;
@@ -67,7 +66,6 @@ public class Configuration {
                 this.sound = sound.get();
             } else {
                 plugin.getLogger().log(Level.WARNING, "Failed to load the sound type");
-                sound = null;
             }
         }
     }

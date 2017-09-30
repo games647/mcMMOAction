@@ -33,9 +33,12 @@ the plugin in your plugins folder and start your server.
 
 ## Commands
 
-* /mcmmoaction - toggle the action-bar for mcMMO messages
+* /mmoaction - toggle the action-bar for mcMMO messages
+* /mmoaction progress - toggles the progress feature for the invoker
 
 ## Dependencies
 
 * [ProtocolLib](https://dev.bukkit.org/bukkit-plugins/protocollib)
 * [mcMMO](https://dev.bukkit.org/bukkit-plugins/mcmmo)
+
+![progress](https://user-images.githubusercontent.com/6004542/30592754-0c7b1706-9d16-11e7-8136-cccde2296446.png)

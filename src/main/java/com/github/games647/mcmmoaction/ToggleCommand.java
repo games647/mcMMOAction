@@ -21,21 +21,42 @@ public class ToggleCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
-            UUID uniqueId = ((Player) sender).getUniqueId();
+            Player player = ((Player) sender);
 
-            Set<UUID> disabledActionBar = plugin.getDisabledActionBar();
-            if (disabledActionBar.contains(uniqueId)) {
-                disabledActionBar.remove(uniqueId);
-                sendLocaleMessage(sender, "toggle-actionbar");
+            if (args.length > 0) {
+                if (args[0].equalsIgnoreCase("progress")) {
+                    toggleProgress(player);
+                } else {
+                    sendLocaleMessage(sender, "unknown-argument");
+                }
             } else {
-                disabledActionBar.add(uniqueId);
-                sendLocaleMessage(sender, "toggle-chat");
+                toggle(player, plugin.getActionBarDisabled(), "toggle-actionbar", "toggle-chat");
             }
         } else {
             sendLocaleMessage(sender, "no-console");
         }
 
         return true;
+    }
+
+    private void toggleProgress(Player player) {
+        if (!plugin.getConfiguration().isProgressEnabled()) {
+            sendLocaleMessage(player, "progress-global-disabled");
+            return;
+        }
+
+        toggle(player, plugin.getProgressBarDisabled(), "progress-enable", "progress-disable");
+    }
+
+    private void toggle(Player player, Set<UUID> disabledLst, String enableKey, String disabledKey) {
+        UUID uniqueId = player.getUniqueId();
+        if (disabledLst.contains(uniqueId)) {
+            disabledLst.remove(uniqueId);
+            sendLocaleMessage(player, enableKey);
+        } else {
+            disabledLst.add(uniqueId);
+            sendLocaleMessage(player, disabledKey);
+        }
     }
 
     private void sendLocaleMessage(CommandSender sender, String key) {

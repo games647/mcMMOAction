@@ -24,10 +24,8 @@ import static com.comphenix.protocol.PacketType.Play.Server.CHAT;
 
 public class MessageListener extends PacketAdapter {
 
-    private static final String PLUGIN_TAG = "[mcMMO] ";
-
     private final mcMMOAction plugin;
-    private final Pattern pluginTagPattern = Pattern.compile(PLUGIN_TAG);
+    private final Pattern pluginTagPattern = Pattern.compile(Pattern.quote("[mcMMO] "));
     private final Gson gson = new Gson();
 
     //compile the pattern just once - remove the comma so it also detect numbers like (10,000)
@@ -37,7 +35,7 @@ public class MessageListener extends PacketAdapter {
     private final ImmutableSet<String> localizedMessages;
 
     public MessageListener(mcMMOAction plugin, Collection<String> messages) {
-        super(params().plugin(plugin).optionAsync().types(CHAT));
+        super(params().plugin(plugin).types(CHAT));
 
         this.plugin = plugin;
         this.localizedMessages = ImmutableSet.copyOf(messages
@@ -56,7 +54,7 @@ public class MessageListener extends PacketAdapter {
         ChatType chatType = readChatPosition(packet);
         Player player = packetEvent.getPlayer();
         if (chatType != ChatType.SYSTEM
-                || plugin.getDisabledActionBar().contains(player.getUniqueId())
+                || plugin.getActionBarDisabled().contains(player.getUniqueId())
                 || !player.hasPermission(plugin.getName().toLowerCase() + ".display")) {
             return;
         }
@@ -67,6 +65,7 @@ public class MessageListener extends PacketAdapter {
         }
 
         String json = message.getJson();
+        System.out.println(json);
         String cleanedJson = gson.toJson(cleanJsonFromHover(json));
         if (cleanedJson == null) {
             return;
@@ -74,7 +73,7 @@ public class MessageListener extends PacketAdapter {
 
         BaseComponent chatComponent = ComponentSerializer.parse(cleanedJson)[0];
         if (chatComponent != null && isMcMMOMessage(chatComponent.toPlainText())) {
-            writeChatPosition(packet, ChatType.GAME_INFO);
+            writeChatPosition(packet);
 
             //action bar doesn't support the new chat features
             String legacyText = pluginTagPattern.matcher(chatComponent.toLegacyText()).replaceFirst("");
@@ -98,11 +97,11 @@ public class MessageListener extends PacketAdapter {
         return ChatType.values()[positionId];
     }
 
-    private void writeChatPosition(PacketContainer packet, ChatType position) {
+    private void writeChatPosition(PacketContainer packet) {
         if (plugin.supportsChatTypeEnum()) {
-            packet.getChatTypes().writeSafely(0, position);
+            packet.getChatTypes().writeSafely(0, ChatType.GAME_INFO);
         } else {
-            packet.getBytes().writeSafely(0, position.getId());
+            packet.getBytes().writeSafely(0, ChatType.GAME_INFO.getId());
         }
     }
 
@@ -116,7 +115,10 @@ public class MessageListener extends PacketAdapter {
             removeHoverEvent(jsonComponent.getAsJsonArray("extra"));
         }
 
-        jsonComponent.remove("with");
+        if (jsonComponent.has("with")) {
+            removeHoverEvent(jsonComponent.getAsJsonArray("with"));
+        }
+
         return jsonComponent;
     }
 

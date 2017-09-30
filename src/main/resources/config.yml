@@ -46,6 +46,7 @@ ignore:
         - Ability.Generic.Refresh
 
 # Should a message be displayed in the action bar every time the player gain skill experience
+# Example image: https://user-images.githubusercontent.com/6004542/30592754-0c7b1706-9d16-11e7-8136-cccde2296446.png
 progress: false
 
 # What message should be displayed if the above option is activated
@@ -57,6 +58,15 @@ progress: false
 # * {next-lvl} - Next skill level
 progress-msg: '&a{skill-type}: &b{exp}&f/&c{exp-remaining} &f| &3Lv: &b{current-lvl}'
 
+# If the user enabled the progress bar
+progress-enable: "&2Enabled displaying progress messages in your action-bar"
+
+# If the user disables the progress bar
+progress-disable: "&2Disabled displaying progress messages in your action-bar"
+
+# if progress: is set to false above
+progress-global-disabled: "&4The progress feature is globally disabled"
+
 # User deactivated mcMMOAction, so message will be displayed in chat
 toggle-chat: '&2Notifications will be displayed in chat'
 
@@ -65,3 +75,6 @@ toggle-actionbar: "&2You'll see notification in the action bar"
 
 # Only players are allowed to execute the toggle command
 no-console: '&4Only players can see the action-bar'
+
+# If the argument for /command arg is not known to the plugin
+unknown-argument: "&4Incorrect command usage. The submitted argument is unknown"

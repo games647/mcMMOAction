@@ -10,10 +10,16 @@ import com.github.games647.mcmmoaction.listener.MessageListener;
 import com.github.games647.mcmmoaction.listener.PlayerListener;
 import com.google.common.collect.Sets;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -26,13 +32,16 @@ import static com.comphenix.protocol.PacketType.Play.Server.CHAT;
 
 public class mcMMOAction extends JavaPlugin {
 
-    private final Set<UUID> disabledActionBar = Sets.newConcurrentHashSet();
-
-    private Configuration configuration;
+    private static final String PROGRESS_FILE_NAME = "disabled-progress.txt";
+    private static final String ACTIONBAR_FILE_NAME = "disabled-action.txt";
 
     private final MinecraftVersion currentVersion = MinecraftVersion.getCurrentVersion();
     //in comparison to the ProtocolLib variant this includes the build number
     private final MinecraftVersion explorationUpdate = new MinecraftVersion(1, 11, 2);
+
+    private Set<UUID> actionBarDisabled;
+    private Set<UUID> progressBarDisabled;
+    private Configuration configuration;
 
     @Override
     public void onEnable() {
@@ -47,10 +56,51 @@ public class mcMMOAction extends JavaPlugin {
         //the sending order gets mixed up
         ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
         protocolManager.addPacketListener(new MessageListener(this, configuration.getMessages()));
+
+        //load disabled lists
+        actionBarDisabled = loadDisabled(ACTIONBAR_FILE_NAME);
+        progressBarDisabled = loadDisabled(PROGRESS_FILE_NAME);
     }
 
-    public Set<UUID> getDisabledActionBar() {
-        return disabledActionBar;
+    @Override
+    public void onDisable() {
+        saveDisabled(ACTIONBAR_FILE_NAME, actionBarDisabled);
+        saveDisabled(PROGRESS_FILE_NAME, progressBarDisabled);
+    }
+
+    private Set<UUID> loadDisabled(String fileName) {
+        Path file = getDataFolder().toPath().resolve(fileName);
+        if (Files.exists(file)) {
+            try {
+                return Files.readAllLines(file).stream().map(UUID::fromString).collect(Collectors.toSet());
+            } catch (IOException ioEx) {
+                getLogger().log(Level.WARNING, "Failed to load disabled list", ioEx);
+            }
+        }
+
+        return Sets.newHashSet();
+    }
+
+    private void saveDisabled(String fileName, Set<UUID> disabledLst) {
+        Path file = getDataFolder().toPath().resolve(fileName);
+        try {
+            List<String> progressLst = disabledLst.stream().map(Object::toString).collect(Collectors.toList());
+            Files.write(file, progressLst, StandardOpenOption.CREATE);
+        } catch (IOException ioEx) {
+            getLogger().log(Level.WARNING, "Failed to save disabled list", ioEx);
+        }
+    }
+
+    public Set<UUID> getActionBarDisabled() {
+        return actionBarDisabled;
+    }
+
+    public Set<UUID> getProgressBarDisabled() {
+        return progressBarDisabled;
+    }
+
+    public boolean isProgressEnabled(UUID user) {
+        return configuration.isProgressEnabled() && !progressBarDisabled.contains(user);
     }
 
     public Configuration getConfiguration() {
@@ -70,7 +120,7 @@ public class mcMMOAction extends JavaPlugin {
      * Sends the action bar message using packets in order to be compatible with 1.8
      *
      * @param receiver the receiver of this message
-     * @param message the message content
+     * @param message  the message content
      */
     public void sendActionMessage(Player receiver, String message) {
         if (supportsChatTypeEnum()) {

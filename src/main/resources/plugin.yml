@@ -16,13 +16,13 @@ depend: [ProtocolLib, mcMMO]
 
 commands:
     mmoaction:
-        description: 'Toggle if the invoker wants to receive the mcMMO message in chat or action-bar'
-        aliases: [${project.artifactId}]
+        description: 'Toggle the action bar display or progress feature'
+        aliases: [${project.artifactId}F]
         permission: '${project.artifactId}.command.toggle'
 
 permissions:
     ${project.artifactId}.*:
-        description: Gives access to all ${project.name} Features
+        description: Gives access to all ${project.name} features
         children:
             ${project.artifactId}.commands.*: true
             ${project.artifactId}.display: true

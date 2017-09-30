@@ -22,18 +22,17 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent quitEvent) {
         Player player = quitEvent.getPlayer();
-        plugin.getDisabledActionBar().remove(player.getUniqueId());
+        plugin.getActionBarDisabled().remove(player.getUniqueId());
     }
 
     @EventHandler
     public void onExperienceGain(McMMOPlayerXpGainEvent experienceEvent) {
-        if (plugin.getConfiguration().isProgressEnabled()) {
+        Player player = experienceEvent.getPlayer();
+        if (plugin.isProgressEnabled(player.getUniqueId())) {
             String message = plugin.getConfig().getString("progress-msg");
             String coloredMessage = ChatColor.translateAlternateColorCodes('&', message);
 
-            Player player = experienceEvent.getPlayer();
             coloredMessage = replaceVariables(experienceEvent, coloredMessage, player);
-
             plugin.sendActionMessage(player, coloredMessage);
         }
     }
