@@ -65,7 +65,6 @@ public class MessageListener extends PacketAdapter {
         }
 
         String json = message.getJson();
-        System.out.println(json);
         String cleanedJson = gson.toJson(cleanJsonFromHover(json));
         if (cleanedJson == null) {
             return;
