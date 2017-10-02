@@ -8,6 +8,7 @@ import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -25,7 +26,7 @@ public class PlayerListener implements Listener {
         plugin.getActionBarDisabled().remove(player.getUniqueId());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onExperienceGain(McMMOPlayerXpGainEvent experienceEvent) {
         Player player = experienceEvent.getPlayer();
         if (plugin.isProgressEnabled(player.getUniqueId())) {

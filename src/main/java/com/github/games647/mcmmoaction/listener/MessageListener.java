@@ -6,9 +6,11 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.ChatType;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.github.games647.mcmmoaction.mcMMOAction;
+import com.google.common.base.Enums;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.Collection;
@@ -16,6 +18,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.chat.ComponentSerializer;
 
 import org.bukkit.entity.Player;
@@ -28,6 +31,8 @@ public class MessageListener extends PacketAdapter {
     private final Pattern pluginTagPattern = Pattern.compile(Pattern.quote("[mcMMO] "));
     private final Gson gson = new Gson();
 
+    private final boolean shouldRemoveHover;
+
     //compile the pattern just once - remove the comma so it also detect numbers like (10,000)
     private final Pattern numberRemover = Pattern.compile("[,0-9]");
 
@@ -36,6 +41,8 @@ public class MessageListener extends PacketAdapter {
 
     public MessageListener(mcMMOAction plugin, Collection<String> messages) {
         super(params().plugin(plugin).types(CHAT));
+
+        shouldRemoveHover = !Enums.getIfPresent(HoverEvent.Action.class, "SHOW_ENTITY").isPresent();
 
         this.plugin = plugin;
         this.localizedMessages = ImmutableSet.copyOf(messages
@@ -65,12 +72,15 @@ public class MessageListener extends PacketAdapter {
         }
 
         String json = message.getJson();
-        String cleanedJson = gson.toJson(cleanJsonFromHover(json));
-        if (cleanedJson == null) {
+        if (shouldRemoveHover) {
+            json = gson.toJson(cleanJsonFromHover(json));
+        }
+
+        if (json == null) {
             return;
         }
 
-        BaseComponent chatComponent = ComponentSerializer.parse(cleanedJson)[0];
+        BaseComponent chatComponent = ComponentSerializer.parse(json)[0];
         if (chatComponent != null && isMcMMOMessage(chatComponent.toPlainText())) {
             writeChatPosition(packet);
 
@@ -104,9 +114,13 @@ public class MessageListener extends PacketAdapter {
         }
     }
 
-    private JsonObject cleanJsonFromHover(String json) {
-        JsonObject jsonComponent = gson.fromJson(json, JsonObject.class);
-        return cleanJsonFromHover(jsonComponent);
+    private JsonElement cleanJsonFromHover(String json) {
+        JsonElement jsonComponent = gson.fromJson(json, JsonElement.class);
+        if (jsonComponent instanceof JsonObject) {
+            return cleanJsonFromHover((JsonObject) jsonComponent);
+        }
+
+        return jsonComponent;
     }
 
     private JsonObject cleanJsonFromHover(JsonObject jsonComponent) {
