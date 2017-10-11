@@ -9,7 +9,7 @@
 
     <name>mcMMOAction</name>
     <version>2.1.2</version>
-    <inceptionYear>2016</inceptionYear>
+
     <url>https://dev.bukkit.org/bukkit-plugins/mcmmoaction/</url>
     <description>
         Displays mcMMO messages in the ActionBar

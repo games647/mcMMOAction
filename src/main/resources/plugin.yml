@@ -17,7 +17,7 @@ depend: [ProtocolLib, mcMMO]
 commands:
     mmoaction:
         description: 'Toggle the action bar display or progress feature'
-        aliases: [${project.artifactId}F]
+        aliases: [${project.artifactId}]
         permission: '${project.artifactId}.command.toggle'
 
 permissions:

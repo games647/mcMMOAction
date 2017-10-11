@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -81,7 +82,7 @@ public class mcMMOAction extends JavaPlugin {
         return Sets.newHashSet();
     }
 
-    private void saveDisabled(String fileName, Set<UUID> disabledLst) {
+    private void saveDisabled(String fileName, Collection<UUID> disabledLst) {
         Path file = getDataFolder().toPath().resolve(fileName);
         try {
             List<String> progressLst = disabledLst.stream().map(Object::toString).collect(Collectors.toList());
@@ -129,17 +130,14 @@ public class mcMMOAction extends JavaPlugin {
             return;
         }
 
-        ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-        PacketContainer chatPacket = protocolManager.createPacket(CHAT);
-
+        PacketContainer chatPacket = new PacketContainer(CHAT);
         chatPacket.getChatComponents().write(0, WrappedChatComponent.fromText(message));
         chatPacket.getBytes().write(0, ChatType.GAME_INFO.getId());
 
         //ignore our own packets
         chatPacket.addMetadata(getName(), true);
-
         try {
-            protocolManager.sendServerPacket(receiver, chatPacket);
+            ProtocolLibrary.getProtocolManager().sendServerPacket(receiver, chatPacket);
         } catch (InvocationTargetException invokeEx) {
             getLogger().log(Level.WARNING, "Failed to send action bar message", invokeEx);
         }

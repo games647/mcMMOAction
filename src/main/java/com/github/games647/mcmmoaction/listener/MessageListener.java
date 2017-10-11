@@ -116,7 +116,7 @@ public class MessageListener extends PacketAdapter {
 
     private JsonElement cleanJsonFromHover(String json) {
         JsonElement jsonComponent = gson.fromJson(json, JsonElement.class);
-        if (jsonComponent instanceof JsonObject) {
+        if (jsonComponent.isJsonObject()) {
             return cleanJsonFromHover((JsonObject) jsonComponent);
         }
 
