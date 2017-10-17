@@ -29,7 +29,7 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onExperienceGain(McMMOPlayerXpGainEvent experienceEvent) {
         Player player = experienceEvent.getPlayer();
-        if (plugin.isProgressEnabled(player.getUniqueId())) {
+        if (plugin.isProgressEnabled(player)) {
             String message = plugin.getConfig().getString("progress-msg");
             String coloredMessage = ChatColor.translateAlternateColorCodes('&', message);
 

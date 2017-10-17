@@ -58,16 +58,10 @@ public class MessageListener extends PacketAdapter {
             return;
         }
 
-        ChatType chatType = readChatPosition(packet);
         Player player = packetEvent.getPlayer();
-        if (chatType != ChatType.SYSTEM
-                || plugin.getActionBarDisabled().contains(player.getUniqueId())
-                || !player.hasPermission(plugin.getName().toLowerCase() + ".display")) {
-            return;
-        }
-
         WrappedChatComponent message = packet.getChatComponents().read(0);
-        if (message == null) {
+        ChatType chatType = readChatPosition(packet);
+        if (message == null || chatType != ChatType.SYSTEM) {
             return;
         }
 
@@ -76,12 +70,8 @@ public class MessageListener extends PacketAdapter {
             json = gson.toJson(cleanJsonFromHover(json));
         }
 
-        if (json == null) {
-            return;
-        }
-
         BaseComponent chatComponent = ComponentSerializer.parse(json)[0];
-        if (chatComponent != null && isMcMMOMessage(chatComponent.toPlainText())) {
+        if (chatComponent != null && isMcMMOMessage(chatComponent.toPlainText()) && plugin.isActionBarEnabled(player)) {
             writeChatPosition(packet);
 
             //action bar doesn't support the new chat features

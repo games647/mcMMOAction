@@ -100,8 +100,9 @@ public class mcMMOAction extends JavaPlugin {
         return progressBarDisabled;
     }
 
-    public boolean isProgressEnabled(UUID user) {
-        return configuration.isProgressEnabled() && !progressBarDisabled.contains(user);
+    public boolean isProgressEnabled(Player player) {
+        return configuration.isProgressEnabled() && !progressBarDisabled.contains(player.getUniqueId())
+                && player.hasPermission(getName().toLowerCase() + ".display");
     }
 
     public Configuration getConfiguration() {
@@ -145,5 +146,10 @@ public class mcMMOAction extends JavaPlugin {
 
     public boolean supportsChatTypeEnum() {
         return currentVersion.compareTo(explorationUpdate) > 0;
+    }
+
+    public boolean isActionBarEnabled(Player player) {
+        return !actionBarDisabled.contains(player.getUniqueId())
+                && player.hasPermission(getName().toLowerCase() + ".display");
     }
 }
