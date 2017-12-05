@@ -8,6 +8,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers.ChatType;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.github.games647.mcmmoaction.listener.MessageListener;
 import com.github.games647.mcmmoaction.listener.PlayerListener;
+import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.google.common.collect.Sets;
 
 import java.io.IOException;
@@ -92,17 +93,21 @@ public class mcMMOAction extends JavaPlugin {
         }
     }
 
-    public Set<UUID> getActionBarDisabled() {
+    public Collection<UUID> getActionBarDisabled() {
         return actionBarDisabled;
     }
 
-    public Set<UUID> getProgressBarDisabled() {
+    public Collection<UUID> getProgressBarDisabled() {
         return progressBarDisabled;
     }
 
     public boolean isProgressEnabled(Player player) {
         return configuration.isProgressEnabled() && !progressBarDisabled.contains(player.getUniqueId())
                 && player.hasPermission(getName().toLowerCase() + ".display");
+    }
+
+    public boolean isDisabledProgress(SkillType skill) {
+        return configuration.getDisabledSkillProgress().contains(skill);
     }
 
     public Configuration getConfiguration() {

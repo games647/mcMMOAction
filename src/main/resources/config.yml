@@ -64,6 +64,12 @@ progress-enable: "&2Enabled displaying progress messages in your action-bar"
 # If the user disables the progress bar
 progress-disable: "&2Disabled displaying progress messages in your action-bar"
 
+# Case insensitive list of skills that this plugin will ignore for progress messages
+# You can see the number of skill types here:
+# https://github.com/mcMMO-Dev/mcMMO/blob/master/src/main/java/com/gmail/nossr50/datatypes/skills/SkillType.java#L38
+progress-disabled:
+    - SALVAGE
+
 # if progress: is set to false above
 progress-global-disabled: "&4The progress feature is globally disabled"
 

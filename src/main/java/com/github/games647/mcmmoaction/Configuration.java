@@ -31,6 +31,7 @@ public class Configuration {
 
     private final mcMMOAction plugin;
     private final Set<String> messages = Sets.newHashSet();
+    private final Set<SkillType> disabledSkillProgress = Sets.newHashSet();
 
     //notification sound
     private Sound sound;
@@ -52,7 +53,17 @@ public class Configuration {
         loadMessages(config);
         loadNotificationSound(config.getConfigurationSection("notification-sound"));
 
-        progressEnabled = plugin.getConfig().getBoolean("progress");
+        progressEnabled = config.getBoolean("progress");
+
+        for (String disableSkill : config.getStringList("progress-disabled")) {
+            Optional<SkillType> skillType = Enums.getIfPresent(SkillType.class, disableSkill.toUpperCase());
+            if (skillType.isPresent()) {
+                disabledSkillProgress.add(skillType.get());
+            } else {
+                plugin.getLogger()
+                        .log(Level.WARNING, "The skill type {0} for disabled progress is unknown", disableSkill);
+            }
+        }
     }
 
     private void loadNotificationSound(ConfigurationSection section) {
@@ -173,6 +184,10 @@ public class Configuration {
 
     public Set<String> getMessages() {
         return messages;
+    }
+
+    public Set<SkillType> getDisabledSkillProgress() {
+        return disabledSkillProgress;
     }
 
     public boolean isProgressEnabled() {
