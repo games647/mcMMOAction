@@ -9,7 +9,6 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.github.games647.mcmmoaction.listener.MessageListener;
 import com.github.games647.mcmmoaction.listener.PlayerListener;
 import com.gmail.nossr50.datatypes.skills.SkillType;
-import com.google.common.collect.Sets;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -17,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -74,21 +74,27 @@ public class mcMMOAction extends JavaPlugin {
         Path file = getDataFolder().toPath().resolve(fileName);
         if (Files.exists(file)) {
             try {
-                return Files.readAllLines(file).stream().map(UUID::fromString).collect(Collectors.toSet());
+                return Files.lines(file).map(UUID::fromString).collect(Collectors.toSet());
             } catch (IOException ioEx) {
                 getLogger().log(Level.WARNING, "Failed to load disabled list", ioEx);
             }
         }
 
-        return Sets.newHashSet();
+        return new HashSet<>();
     }
 
     private void saveDisabled(String fileName, Collection<UUID> disabledLst) {
         Path file = getDataFolder().toPath().resolve(fileName);
         try {
-            Files.createDirectories(file);
+            Path dataFolder = file.getParent();
+            if (Files.notExists(dataFolder)) {
+                Files.createDirectories(dataFolder);
+            }
 
-            List<String> progressLst = disabledLst.stream().map(Object::toString).collect(Collectors.toList());
+            List<String> progressLst = disabledLst.stream()
+                    .parallel()
+                    .map(Object::toString)
+                    .collect(Collectors.toList());
             Files.write(file, progressLst, StandardOpenOption.CREATE);
         } catch (IOException ioEx) {
             getLogger().log(Level.WARNING, "Failed to save disabled list", ioEx);
