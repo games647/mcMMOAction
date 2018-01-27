@@ -86,6 +86,8 @@ public class mcMMOAction extends JavaPlugin {
     private void saveDisabled(String fileName, Collection<UUID> disabledLst) {
         Path file = getDataFolder().toPath().resolve(fileName);
         try {
+            Files.createDirectories(file);
+
             List<String> progressLst = disabledLst.stream().map(Object::toString).collect(Collectors.toList());
             Files.write(file, progressLst, StandardOpenOption.CREATE);
         } catch (IOException ioEx) {
