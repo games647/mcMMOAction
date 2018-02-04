@@ -20,13 +20,13 @@ import org.bukkit.event.Listener;
 
 import static java.lang.String.valueOf;
 
-public class PlayerListener implements Listener {
+public class ExperienceGainListener implements Listener {
 
     private final Map<String, BiFunction<Player, String, String>> replacers = new HashMap<>();
     private final Pattern variablePattern;
     private final mcMMOAction plugin;
 
-    public PlayerListener(mcMMOAction plugin) {
+    public ExperienceGainListener(mcMMOAction plugin) {
         this.plugin = plugin;
 
         replacers.put("{skill-type}", (player, skill) -> skill);

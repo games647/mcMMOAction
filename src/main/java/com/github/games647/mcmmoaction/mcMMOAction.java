@@ -7,7 +7,7 @@ import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.wrappers.EnumWrappers.ChatType;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.github.games647.mcmmoaction.listener.MessageListener;
-import com.github.games647.mcmmoaction.listener.PlayerListener;
+import com.github.games647.mcmmoaction.listener.ExperienceGainListener;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 
 import java.io.IOException;
@@ -38,7 +38,8 @@ public class mcMMOAction extends JavaPlugin {
     private static final String PROGRESS_FILE_NAME = "disabled-progress.txt";
     private static final String ACTIONBAR_FILE_NAME = "disabled-action.txt";
 
-    private final MinecraftVersion currentVersion = MinecraftVersion.getCurrentVersion();
+    private final TimeoutManager timeoutManager = new TimeoutManager();
+
     //in comparison to the ProtocolLib variant this includes the build number
     private final MinecraftVersion explorationUpdate = new MinecraftVersion(1, 11, 2);
 
@@ -52,7 +53,9 @@ public class mcMMOAction extends JavaPlugin {
         configuration.saveDefault();
         configuration.load();
 
-        getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+        getServer().getPluginManager().registerEvents(new ExperienceGainListener(this), this);
+        getServer().getPluginManager().registerEvents(timeoutManager, this);
+
         getCommand("mmoaction").setExecutor(new ToggleCommand(this));
 
         //the event could and should be executed async, but if we try to use it with other sync listeners
@@ -125,7 +128,7 @@ public class mcMMOAction extends JavaPlugin {
 
     public void playNotificationSound(Player player) {
         Sound sound = configuration.getSoundType();
-        if (sound != null) {
+        if (sound != null && timeoutManager.isAllowed(player)) {
             float volume = configuration.getVolume();
             float pitch = configuration.getPitch();
             player.playSound(player.getLocation(), sound, volume, pitch);
@@ -159,7 +162,7 @@ public class mcMMOAction extends JavaPlugin {
     }
 
     public boolean supportsChatTypeEnum() {
-        return currentVersion.compareTo(explorationUpdate) > 0;
+        return MinecraftVersion.getCurrentVersion().compareTo(explorationUpdate) > 0;
     }
 
     public boolean isActionBarEnabled(Player player) {
