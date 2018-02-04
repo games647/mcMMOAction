@@ -16,13 +16,14 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import net.md_5.bungee.api.ChatColor;
 
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+
+import static java.util.stream.Collectors.toList;
 
 public class Configuration {
 
@@ -133,7 +134,8 @@ public class Configuration {
 
         //explicit added messages
         messages.addAll(config.getStringList("others").stream()
-                .map(this::getLocalizedMessage).collect(Collectors.toList()));
+                .map(this::getLocalizedMessage)
+                .collect(toList()));
 
         //explicit ignored messages
         config.getStringList("ignore.others").stream().map(this::getLocalizedMessage).forEach(messages::remove);

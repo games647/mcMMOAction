@@ -15,15 +15,16 @@ import com.google.gson.JsonObject;
 
 import java.util.Collection;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.HoverEvent.Action;
 import net.md_5.bungee.chat.ComponentSerializer;
 
 import org.bukkit.entity.Player;
 
 import static com.comphenix.protocol.PacketType.Play.Server.CHAT;
+import static java.util.stream.Collectors.toSet;
 
 public class MessageListener extends PacketAdapter {
 
@@ -42,13 +43,13 @@ public class MessageListener extends PacketAdapter {
     public MessageListener(mcMMOAction plugin, Collection<String> messages) {
         super(params().plugin(plugin).types(CHAT));
 
-        shouldRemoveHover = !Enums.getIfPresent(HoverEvent.Action.class, "SHOW_ENTITY").isPresent();
+        shouldRemoveHover = !Enums.getIfPresent(Action.class, "SHOW_ENTITY").isPresent();
 
         this.plugin = plugin;
         this.localizedMessages = ImmutableSet.copyOf(messages
                 .stream()
                 .map(message -> numberRemover.matcher(message).replaceAll(""))
-                .collect(Collectors.toSet()));
+                .collect(toSet()));
     }
 
     @Override
@@ -127,14 +128,11 @@ public class MessageListener extends PacketAdapter {
 
     private void removeHoverEvent(JsonArray components) {
         //due this issue: https://github.com/SpigotMC/BungeeCord/issues/1300 - there is a class missing
-        components.forEach(jsonElement -> {
-            if (jsonElement.isJsonObject()) {
-                JsonObject jsonObject = jsonElement.getAsJsonObject();
-                jsonObject.remove("hoverEvent");
-
+        Stream.of(components)
+                .filter(JsonElement::isJsonObject)
+                .map(JsonElement::getAsJsonObject)
+                .peek(object -> object.remove("hoverEvent"))
                 //if this object has also extra or with components use them there too
-                cleanJsonFromHover(jsonObject);
-            }
-        });
+                .forEach(this::cleanJsonFromHover);
     }
 }

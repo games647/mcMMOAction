@@ -5,25 +5,47 @@ import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
+
+import static java.lang.String.valueOf;
 
 public class PlayerListener implements Listener {
 
+    private final Map<String, BiFunction<Player, String, String>> replacers = new HashMap<>();
+    private final Pattern variablePattern;
     private final mcMMOAction plugin;
 
     public PlayerListener(mcMMOAction plugin) {
         this.plugin = plugin;
-    }
 
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent quitEvent) {
-        Player player = quitEvent.getPlayer();
-        plugin.getActionBarDisabled().remove(player.getUniqueId());
+        replacers.put("{skill-type}", (player, skill) -> skill);
+        replacers.put("{exp}}", (player, skill) -> valueOf(ExperienceAPI.getXP(player, skill)));
+        replacers.put("{exp-remaining}", (player, skill) -> valueOf(ExperienceAPI.getXPRemaining(player, skill)));
+        replacers.put("{current-lvl}", (player, skill) -> valueOf(ExperienceAPI.getLevel(player, skill)));
+        replacers.put("{next-lvl}", (player, skill) -> valueOf(ExperienceAPI.getLevel(player, skill) + 1));
+
+        StringBuilder builder = new StringBuilder();
+        Iterator<String> iterator = replacers.keySet().iterator();
+        while (iterator.hasNext()) {
+            String var = iterator.next();
+            builder.append('(').append(Pattern.quote(var)).append(')');
+            if (iterator.hasNext()) {
+                builder.append('|');
+            }
+        }
+
+        variablePattern = Pattern.compile(builder.toString());
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -33,22 +55,24 @@ public class PlayerListener implements Listener {
             String message = plugin.getConfig().getString("progress-msg");
             String coloredMessage = ChatColor.translateAlternateColorCodes('&', message);
 
-            coloredMessage = replaceVariables(experienceEvent, coloredMessage, player);
+            coloredMessage = replaceVariables(experienceEvent, coloredMessage);
             plugin.sendActionMessage(player, coloredMessage);
         }
     }
 
-    private String replaceVariables(McMMOPlayerXpGainEvent experienceEvent, String template, Player player) {
+    private String replaceVariables(McMMOPlayerXpGainEvent experienceEvent, String template) {
+        Player player = experienceEvent.getPlayer();
         SkillType skill = experienceEvent.getSkill();
 
-        String skillName = skill.getName();
-        int xpToNextLevel = ExperienceAPI.getXPToNextLevel(player, skillName);
-        int xp = ExperienceAPI.getXP(player, skillName);
-        int level = ExperienceAPI.getLevel(player, skillName);
-        return template.replace("{skill-type}", skillName)
-                .replace("{exp}", String.valueOf(xp))
-                .replace("{exp-remaining}", String.valueOf(xpToNextLevel))
-                .replace("{current-lvl}", String.valueOf(level))
-                .replace("{next-lvl}", String.valueOf(level + 1));
+        //StringBuilder is only compatible with Java 9+
+        StringBuffer buffer = new StringBuffer();
+
+        Matcher matcher = variablePattern.matcher(template);
+        while (matcher.find()) {
+            matcher.appendReplacement(buffer, replacers.get(matcher.group()).apply(player, skill.getName()));
+        }
+
+        matcher.appendTail(buffer);
+        return buffer.toString();
     }
 }

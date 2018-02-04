@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -31,6 +30,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import static com.comphenix.protocol.PacketType.Play.Server.CHAT;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 public class mcMMOAction extends JavaPlugin {
 
@@ -74,7 +75,7 @@ public class mcMMOAction extends JavaPlugin {
         Path file = getDataFolder().toPath().resolve(fileName);
         if (Files.exists(file)) {
             try {
-                return Files.lines(file).map(UUID::fromString).collect(Collectors.toSet());
+                return Files.lines(file).map(UUID::fromString).collect(toSet());
             } catch (IOException ioEx) {
                 getLogger().log(Level.WARNING, "Failed to load disabled list", ioEx);
             }
@@ -94,7 +95,7 @@ public class mcMMOAction extends JavaPlugin {
             List<String> progressLst = disabledLst.stream()
                     .parallel()
                     .map(Object::toString)
-                    .collect(Collectors.toList());
+                    .collect(toList());
             Files.write(file, progressLst, StandardOpenOption.CREATE);
         } catch (IOException ioEx) {
             getLogger().log(Level.WARNING, "Failed to save disabled list", ioEx);

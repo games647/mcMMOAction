@@ -69,6 +69,7 @@
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib-API</artifactId>
             <version>4.3.0</version>
+            <scope>provided</scope>
             <optional>true</optional>
         </dependency>
 
@@ -76,13 +77,13 @@
             <groupId>com.gmail.nossr50.mcMMO</groupId>
             <artifactId>mcMMO</artifactId>
             <version>1.5.00</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
-            <optional>true</optional>
         </dependency>
     </dependencies>
 </project>
