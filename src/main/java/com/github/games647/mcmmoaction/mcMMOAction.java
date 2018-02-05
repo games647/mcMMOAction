@@ -128,7 +128,7 @@ public class mcMMOAction extends JavaPlugin {
 
     public void playNotificationSound(Player player) {
         Sound sound = configuration.getSoundType();
-        if (sound != null && timeoutManager.isAllowed(player)) {
+        if (sound != null && timeoutManager.isAllowed(player.getUniqueId())) {
             float volume = configuration.getVolume();
             float pitch = configuration.getPitch();
             player.playSound(player.getLocation(), sound, volume, pitch);

@@ -6,12 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class TimeoutManager implements Listener {
+
+    private static final int TIMEOUT = 2;
 
     private final Map<UUID, Instant> lastNotifications = new HashMap<>();
 
@@ -21,14 +22,16 @@ public class TimeoutManager implements Listener {
         lastNotifications.remove(uniqueId);
     }
 
-    public boolean isAllowed(Player player) {
-        UUID uniqueId = player.getUniqueId();
-
+    public boolean isAllowed(UUID uniqueId) {
         Instant now = Instant.now();
         Instant lastNotification = lastNotifications.get(uniqueId);
 
-        //update the current time
-        lastNotifications.put(uniqueId, now);
-        return lastNotification == null || Duration.between(lastNotification, now).getSeconds() > 2;
+        if (lastNotification == null || Duration.between(lastNotification, now).getSeconds() >= TIMEOUT) {
+            //update the current time
+            lastNotifications.put(uniqueId, now);
+            return true;
+        }
+
+        return false;
     }
 }
