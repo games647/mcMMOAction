@@ -56,7 +56,7 @@ public class mcMMOAction extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ExperienceGainListener(this), this);
         getServer().getPluginManager().registerEvents(timeoutManager, this);
 
-        getCommand("mmoaction").setExecutor(new ToggleCommand(this));
+        getCommand(getName().toLowerCase()).setExecutor(new ToggleCommand(this));
 
         //the event could and should be executed async, but if we try to use it with other sync listeners
         //the sending order gets mixed up
