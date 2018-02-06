@@ -7,7 +7,7 @@ import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.wrappers.EnumWrappers.ChatType;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.github.games647.mcmmoaction.listener.MessageListener;
-import com.github.games647.mcmmoaction.listener.ExperienceGainListener;
+import com.github.games647.mcmmoaction.progress.ExperienceGainListener;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 
 import java.io.IOException;
