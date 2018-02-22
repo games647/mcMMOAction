@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -77,8 +78,8 @@ public class mcMMOAction extends JavaPlugin {
     private Set<UUID> loadDisabled(String fileName) {
         Path file = getDataFolder().toPath().resolve(fileName);
         if (Files.exists(file)) {
-            try {
-                return Files.lines(file).map(UUID::fromString).collect(toSet());
+            try (Stream<String>lines = Files.lines(file)) {
+                return lines.map(UUID::fromString).collect(toSet());
             } catch (IOException ioEx) {
                 getLogger().log(Level.WARNING, "Failed to load disabled list", ioEx);
             }
