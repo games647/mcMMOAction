@@ -9,7 +9,7 @@ notification-sound:
     type: ENTITY_EXPERIENCE_ORB_PICKUP
     # This a decimal number from 0 to 1 - it stands for a percent value
     volume: 0.2
-    # Here stands 0.63 for 100% - a special case in minecraft
+    # Here stands 0.63 for 100% - a special case in Minecraft
     pitch: 0.1
 
 # Message keys on this will be added to this plugin besides the default ones

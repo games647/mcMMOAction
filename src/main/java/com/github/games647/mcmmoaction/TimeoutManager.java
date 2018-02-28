@@ -2,9 +2,9 @@ package com.github.games647.mcmmoaction;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,7 +14,7 @@ public class TimeoutManager implements Listener {
 
     private static final int TIMEOUT = 2;
 
-    private final Map<UUID, Instant> lastNotifications = new HashMap<>();
+    private final Map<UUID, Instant> lastNotifications = new ConcurrentHashMap<>();
 
     @EventHandler
     public void onQuit(PlayerQuitEvent quitEvent) {
