@@ -89,6 +89,8 @@ public class mcMMOAction extends JavaPlugin {
     }
 
     private void saveDisabled(String fileName, Collection<UUID> disabledLst) {
+        getLogger().log(Level.INFO, "Saving {0} with {1}", new Object[]{fileName, disabledLst});
+
         Path file = getDataFolder().toPath().resolve(fileName);
         try {
             Path dataFolder = file.getParent();
@@ -96,10 +98,11 @@ public class mcMMOAction extends JavaPlugin {
                 Files.createDirectories(dataFolder);
             }
 
-            List<String> progressLst = disabledLst.stream()
-                    .parallel()
+            List<String> progressLst = disabledLst
+                    .parallelStream()
                     .map(Object::toString)
                     .collect(toList());
+            getLogger().log(Level.INFO, "Transformed list {0}", progressLst);
             Files.write(file, progressLst, StandardOpenOption.CREATE);
         } catch (IOException ioEx) {
             getLogger().log(Level.WARNING, "Failed to save disabled list", ioEx);
