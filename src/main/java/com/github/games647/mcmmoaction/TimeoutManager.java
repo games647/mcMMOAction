@@ -12,9 +12,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class TimeoutManager implements Listener {
 
-    private static final int TIMEOUT = 2;
-
     private final Map<UUID, Instant> lastNotifications = new ConcurrentHashMap<>();
+    private final Duration timeout;
+
+    public TimeoutManager(Duration timeout) {
+        this.timeout = timeout;
+    }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent quitEvent) {
@@ -26,7 +29,7 @@ public class TimeoutManager implements Listener {
         Instant now = Instant.now();
         Instant lastNotification = lastNotifications.get(uniqueId);
 
-        if (lastNotification == null || Duration.between(lastNotification, now).getSeconds() >= TIMEOUT) {
+        if (lastNotification == null || Duration.between(lastNotification, now).compareTo(timeout) >= 0) {
             //update the current time
             lastNotifications.put(uniqueId, now);
             return true;

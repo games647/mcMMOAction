@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -38,8 +39,9 @@ public class mcMMOAction extends JavaPlugin {
 
     private static final String PROGRESS_FILE_NAME = "disabled-progress.txt";
     private static final String ACTIONBAR_FILE_NAME = "disabled-action.txt";
+    private static final int TIMEOUT = 2;
 
-    private final TimeoutManager timeoutManager = new TimeoutManager();
+    private final TimeoutManager timeoutManager = new TimeoutManager(Duration.ofSeconds(TIMEOUT));
 
     //in comparison to the ProtocolLib variant this includes the build number
     private final MinecraftVersion explorationUpdate = new MinecraftVersion(1, 11, 2);

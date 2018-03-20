@@ -1,5 +1,6 @@
 package com.github.games647.mcmmoaction;
 
+import java.time.Duration;
 import java.util.UUID;
 
 import org.junit.Before;
@@ -15,7 +16,7 @@ public class TimeoutManagerTest {
 
     @Before
     public void setUp() throws Exception {
-        timeoutManager = new TimeoutManager();
+        timeoutManager = new TimeoutManager(Duration.ofSeconds(2));
     }
 
     @Test
