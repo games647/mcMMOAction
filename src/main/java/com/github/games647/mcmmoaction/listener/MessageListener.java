@@ -3,6 +3,8 @@ package com.github.games647.mcmmoaction.listener;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.reflect.FieldUtils;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.EnumWrappers.ChatType;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.github.games647.mcmmoaction.mcMMOAction;
@@ -14,6 +16,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.Collection;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -82,7 +85,7 @@ public class MessageListener extends PacketAdapter {
         }
     }
 
-    private boolean isMcMMOMessage(String plainText) {
+    private boolean isMcMMOMessage(CharSequence plainText) {
         //remove the numbers to match the string easier
         String cleanedMessage = numberRemover.matcher(plainText).replaceAll("");
         return localizedMessages.contains(cleanedMessage);
@@ -90,6 +93,18 @@ public class MessageListener extends PacketAdapter {
 
     private ChatType readChatPosition(PacketContainer packet) {
         if (plugin.supportsChatTypeEnum()) {
+            try {
+                Object pos = FieldUtils.readField(packet.getChatTypes().getField(0), packet.getHandle());
+                if (pos == null) {
+                    //check for null types (invalid packets)
+                    return null;
+                }
+
+                return EnumWrappers.getChatTypeConverter().getSpecific(pos);
+            } catch (IllegalAccessException accessEx) {
+                plugin.getLogger().log(Level.WARNING, "Cannot read chat position from packet", accessEx);
+            }
+
             return packet.getChatTypes().read(0);
         }
 

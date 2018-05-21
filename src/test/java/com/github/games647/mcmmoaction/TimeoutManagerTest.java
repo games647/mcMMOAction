@@ -2,6 +2,7 @@ package com.github.games647.mcmmoaction;
 
 import java.time.Duration;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,10 +25,10 @@ public class TimeoutManagerTest {
         UUID uuid = UUID.randomUUID();
 
         assertThat(timeoutManager.isAllowed(uuid), is(true));
-        Thread.sleep(1_000L);
+        TimeUnit.SECONDS.sleep(1);
         assertThat(timeoutManager.isAllowed(uuid), is(false));
 
-        Thread.sleep(1_000L);
+        TimeUnit.SECONDS.sleep(1);
         assertThat(timeoutManager.isAllowed(uuid), is(true));
     }
 
@@ -37,7 +38,7 @@ public class TimeoutManagerTest {
         UUID second = UUID.randomUUID();
 
         assertThat(timeoutManager.isAllowed(first), is(true));
-        Thread.sleep(1_000L);
+        TimeUnit.SECONDS.sleep(1);
         assertThat(timeoutManager.isAllowed(first), is(false));
         assertThat(timeoutManager.isAllowed(second), is(true));
     }
