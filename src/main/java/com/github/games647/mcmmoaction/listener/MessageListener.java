@@ -31,6 +31,8 @@ import static java.util.stream.Collectors.toSet;
 
 public class MessageListener extends PacketAdapter {
 
+    private static final String[] childrenClean = {"extra", "with", "style"};
+
     private final mcMMOAction plugin;
     private final Pattern pluginTagPattern = Pattern.compile(Pattern.quote("[mcMMO] "));
     private final Gson gson = new Gson();
@@ -130,12 +132,10 @@ public class MessageListener extends PacketAdapter {
     }
 
     private JsonObject cleanJsonFromHover(JsonObject jsonComponent) {
-        if (jsonComponent.has("extra")) {
-            removeHoverEvent(jsonComponent.getAsJsonArray("extra"));
-        }
-
-        if (jsonComponent.has("with")) {
-            removeHoverEvent(jsonComponent.getAsJsonArray("with"));
+        for (String child : childrenClean) {
+            if (jsonComponent.has(child)) {
+                removeHoverEvent(jsonComponent.getAsJsonArray(child));
+            }
         }
 
         return jsonComponent;
