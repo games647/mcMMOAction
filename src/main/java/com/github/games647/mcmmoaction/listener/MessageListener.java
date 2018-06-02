@@ -72,6 +72,7 @@ public class MessageListener extends PacketAdapter {
         }
 
         String json = message.getJson();
+        plugin.getLogger().info(json);
         if (shouldRemoveHover) {
             json = gson.toJson(cleanJsonFromHover(json));
         }
@@ -142,7 +143,8 @@ public class MessageListener extends PacketAdapter {
     }
 
     private void removeHoverEvent(JsonArray components) {
-        //due this issue: https://github.com/SpigotMC/BungeeCord/issues/1300 - there is a class missing
+        // due this issue: https://github.com/SpigotMC/BungeeCord/issues/1300 -
+        // there is a class missing for the SHOW_ENTITY event
         Stream.of(components)
                 .filter(JsonElement::isJsonObject)
                 .map(JsonElement::getAsJsonObject)
