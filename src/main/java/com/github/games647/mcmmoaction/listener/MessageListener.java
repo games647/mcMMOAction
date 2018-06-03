@@ -10,18 +10,13 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.github.games647.mcmmoaction.mcMMOAction;
 import com.google.common.base.Enums;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.HoverEvent.Action;
+import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.chat.ComponentSerializer;
 
 import org.bukkit.entity.Player;
@@ -31,13 +26,8 @@ import static java.util.stream.Collectors.toSet;
 
 public class MessageListener extends PacketAdapter {
 
-    private static final String[] childrenClean = {"extra", "with", "style"};
-
     private final mcMMOAction plugin;
     private final Pattern pluginTagPattern = Pattern.compile(Pattern.quote("[mcMMO] "));
-    private final Gson gson = new Gson();
-
-    private final boolean shouldRemoveHover;
 
     //compile the pattern just once - remove the comma so it also detect numbers like (10,000)
     private final Pattern numberRemover = Pattern.compile("[,0-9]");
@@ -45,10 +35,14 @@ public class MessageListener extends PacketAdapter {
     //create a immutable set in order to be thread-safe and faster than normal sets
     private final ImmutableSet<String> localizedMessages;
 
+    private HoverEventCleaner cleaner;
+
     public MessageListener(mcMMOAction plugin, Collection<String> messages) {
         super(params().plugin(plugin).types(CHAT));
 
-        shouldRemoveHover = !Enums.getIfPresent(Action.class, "SHOW_ENTITY").isPresent();
+        if (!Enums.getIfPresent(HoverEvent.Action.class, "SHOW_ENTITY").isPresent()) {
+            cleaner = new HoverEventCleaner();
+        }
 
         this.plugin = plugin;
         this.localizedMessages = ImmutableSet.copyOf(messages
@@ -72,9 +66,8 @@ public class MessageListener extends PacketAdapter {
         }
 
         String json = message.getJson();
-        plugin.getLogger().info(json);
-        if (shouldRemoveHover) {
-            json = gson.toJson(cleanJsonFromHover(json));
+        if (cleaner != null) {
+            json = cleaner.cleanJson(json);
         }
 
         BaseComponent chatComponent = ComponentSerializer.parse(json)[0];
@@ -97,7 +90,7 @@ public class MessageListener extends PacketAdapter {
     private ChatType readChatPosition(PacketContainer packet) {
         if (plugin.supportsChatTypeEnum()) {
             try {
-                Object pos = FieldUtils.readField(packet.getChatTypes().getField(0), packet.getHandle());
+                Object pos = FieldUtils.readField(packet.getChatTypes().getField(0), packet.getHandle(), true);
                 if (pos == null) {
                     //check for null types (invalid packets)
                     return null;
@@ -121,35 +114,5 @@ public class MessageListener extends PacketAdapter {
         } else {
             packet.getBytes().writeSafely(0, ChatType.GAME_INFO.getId());
         }
-    }
-
-    private JsonElement cleanJsonFromHover(String json) {
-        JsonElement jsonComponent = gson.fromJson(json, JsonElement.class);
-        if (jsonComponent.isJsonObject()) {
-            return cleanJsonFromHover((JsonObject) jsonComponent);
-        }
-
-        return jsonComponent;
-    }
-
-    private JsonObject cleanJsonFromHover(JsonObject jsonComponent) {
-        for (String child : childrenClean) {
-            if (jsonComponent.has(child)) {
-                removeHoverEvent(jsonComponent.getAsJsonArray(child));
-            }
-        }
-
-        return jsonComponent;
-    }
-
-    private void removeHoverEvent(JsonArray components) {
-        // due this issue: https://github.com/SpigotMC/BungeeCord/issues/1300 -
-        // there is a class missing for the SHOW_ENTITY event
-        Stream.of(components)
-                .filter(JsonElement::isJsonObject)
-                .map(JsonElement::getAsJsonObject)
-                .peek(object -> object.remove("hoverEvent"))
-                //if this object has also extra or with components use them there too
-                .forEach(this::cleanJsonFromHover);
     }
 }
