@@ -1,0 +1,13 @@
+{
+  "translate": "death.fell.accident.generic",
+  "with": [
+    {
+      "insertion": "KleinesGumi",
+      "clickEvent": {
+        "action": "suggest_command",
+        "value": "/msg KleinesGumi "
+      },
+      "text": "KleinesGumi"
+    }
+  ]
+}

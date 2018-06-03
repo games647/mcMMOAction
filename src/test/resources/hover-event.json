@@ -1,0 +1,17 @@
+{
+  "translate": "death.fell.accident.generic",
+  "with": [
+    {
+      "insertion": "KleinesGumi",
+      "clickEvent": {
+        "action": "suggest_command",
+        "value": "/msg KleinesGumi "
+      },
+      "hoverEvent": {
+        "action": "show_entity",
+        "value": "{name:\"KleinesGumi\",id:\"fbaca59e-f3fe-4a96-be79-69accc83c198\"}"
+      },
+      "text": "KleinesGumi"
+    }
+  ]
+}
