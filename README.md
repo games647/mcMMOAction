@@ -14,6 +14,7 @@ the plugin in your plugins folder and start your server.
 * Lightweight
 * Notification sound for new messages (except progress)
 * Support many mcMMO messages
+* Configurable appearance time
 * Supports localized messages
 * Ignore the messages you don't want to see in the action bar
 * Shows progress message if the user gains skill experience
@@ -30,6 +31,10 @@ the plugin in your plugins folder and start your server.
 * Refresh message
 * Party level-up
 * Combat abilities (i.e. swords bleeding)
+* [mcMMOHorses](https://github.com/ZombieStriker/mcMMOHorses/) Support
+    * Refresh messages for Infuriate and Super Speed
+    * Skills increases for Agility, Swiftness, Vitality and Wrath
+    * Notification messages like \*\*Dodge\*\*
 
 ## Commands
 

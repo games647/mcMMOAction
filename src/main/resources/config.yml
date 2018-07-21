@@ -50,6 +50,31 @@ ignore:
     others:
         - Ability.Generic.Refresh
 
+    # Other messages that cannot be extracted automatically and are here placed as they would be displayed in
+    # legacy text format (without hover, click events or other advanced features).
+    # If any of those messages matches even non-mcMMO message they will be redirected to the action bar.
+    #
+    # Numbers and color formatting codes are automatically removed to match the output for multiple of variations.
+    #
+    # Here you can see an example for the plugin mcMMOHorses: https://github.com/ZombieStriker/mcMMOHorses/
+    fixed:
+        # Notification
+        - '**INFURIATE**'
+        - '**DODGE**'
+        - '**GRACEFUL ROLL**'
+        - '**ROLL**'
+        - '**SPRINTING**'
+        - '**HEALING**'
+        # Numbers will be removed to match exactly
+        # Skills
+        - ' Agility skill increased by . Total ()'
+        - ' Swiftness skill increased by . Total ()'
+        - ' Vitality skill increased by . Total ()'
+        - ' Wrath skill increased by . Total ()'
+        # Abilities
+        - '**Your Infuriate is refreshed*'
+        - '**Your Super Speed is refreshed*'
+
 # Should a message be displayed in the action bar every time the player gain skill experience
 # Example image: https://user-images.githubusercontent.com/6004542/30592754-0c7b1706-9d16-11e7-8136-cccde2296446.png
 progress: false
