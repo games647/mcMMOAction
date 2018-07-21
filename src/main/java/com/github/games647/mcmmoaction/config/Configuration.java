@@ -1,5 +1,6 @@
-package com.github.games647.mcmmoaction;
+package com.github.games647.mcmmoaction.config;
 
+import com.github.games647.mcmmoaction.mcMMOAction;
 import com.gmail.nossr50.datatypes.skills.AbilityType;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.datatypes.skills.ToolType;
@@ -19,7 +20,6 @@ import java.util.logging.Level;
 
 import net.md_5.bungee.api.ChatColor;
 
-import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -31,17 +31,17 @@ public class Configuration {
     private static final String NOTIFICATION_IDENTIFIER = "**";
 
     private final mcMMOAction plugin;
+    private final SoundConfig soundConfig;
+
     private final Set<String> messages = Sets.newHashSet();
     private final Set<SkillType> disabledSkillProgress = Sets.newHashSet();
 
-    //notification sound
-    private Sound sound;
-    private float volume;
-    private float pitch;
     private boolean progressEnabled;
+    private int appearanceTime;
 
     public Configuration(mcMMOAction plugin) {
         this.plugin = plugin;
+        this.soundConfig = new SoundConfig(plugin);
     }
 
     public void saveDefault() {
@@ -52,9 +52,10 @@ public class Configuration {
         FileConfiguration config = plugin.getConfig();
 
         loadMessages(config);
-        loadNotificationSound(config.getConfigurationSection("notification-sound"));
+        soundConfig.load(config.getConfigurationSection("notification-sound"));
 
         progressEnabled = config.getBoolean("progress");
+        appearanceTime = Math.max(2, config.getInt("appearance-time"));
 
         for (String disableSkill : config.getStringList("progress-disabled")) {
             Optional<SkillType> skillType = Enums.getIfPresent(SkillType.class, disableSkill.toUpperCase());
@@ -63,21 +64,6 @@ public class Configuration {
             } else {
                 plugin.getLogger()
                         .log(Level.WARNING, "The skill type {0} for disabled progress is unknown", disableSkill);
-            }
-        }
-    }
-
-    private void loadNotificationSound(ConfigurationSection section) {
-        if (section.getBoolean("enabled")) {
-            volume = (float) section.getDouble("volume");
-            pitch = (float) section.getDouble("pitch");
-
-            String soundType = section.getString("type");
-            Optional<Sound> sound = Enums.getIfPresent(Sound.class, soundType.toUpperCase());
-            if (sound.isPresent()) {
-                this.sound = sound.get();
-            } else {
-                plugin.getLogger().log(Level.WARNING, "Failed to load the sound type");
             }
         }
     }
@@ -172,27 +158,23 @@ public class Configuration {
         return ChatColor.stripColor(localizedMessage);
     }
 
-    public Sound getSoundType() {
-        return sound;
-    }
-
-    public float getVolume() {
-        return volume;
-    }
-
-    public float getPitch() {
-        return pitch;
+    public SoundConfig getSoundConfig() {
+        return soundConfig;
     }
 
     public Set<String> getMessages() {
         return messages;
     }
 
-    public Set<SkillType> getDisabledSkillProgress() {
-        return disabledSkillProgress;
+    public boolean isSkillEnabled(SkillType skill) {
+        return disabledSkillProgress.contains(skill);
     }
 
     public boolean isProgressEnabled() {
         return progressEnabled;
+    }
+
+    public int getAppearanceTime() {
+        return appearanceTime;
     }
 }

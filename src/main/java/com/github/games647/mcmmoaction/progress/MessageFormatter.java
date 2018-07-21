@@ -21,7 +21,7 @@ public class MessageFormatter<F, S> {
     }
 
     public String replace(F first, S second, String template) {
-        //StringBuilder is only compatible with Java 9+
+        // StringBuilder is only compatible with Java 9+
         StringBuffer buffer = new StringBuffer();
 
         Matcher matcher = variablePattern.matcher(template);

@@ -1,6 +1,7 @@
 package com.github.games647.mcmmoaction.progress;
 
 import com.github.games647.mcmmoaction.mcMMOAction;
+import com.github.games647.mcmmoaction.refresh.RefreshManager;
 import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
@@ -13,13 +14,15 @@ import org.bukkit.event.Listener;
 
 import static java.lang.String.valueOf;
 
-public class ExperienceGainListener implements Listener {
+public class ExperienceListener implements Listener {
 
     private final mcMMOAction plugin;
+    private final RefreshManager refreshManager;
     private final MessageFormatter<Player, String> formatter = new MessageFormatter<>();
 
-    public ExperienceGainListener(mcMMOAction plugin) {
+    public ExperienceListener(mcMMOAction plugin, RefreshManager refreshManager) {
         this.plugin = plugin;
+        this.refreshManager = refreshManager;
 
         formatter.addReplacer("skill-type", (player, skill) -> skill);
         formatter.addReplacer("exp", (player, skill) -> valueOf(ExperienceAPI.getXP(player, skill)));
@@ -31,11 +34,16 @@ public class ExperienceGainListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onExperienceGain(McMMOPlayerXpGainEvent experienceEvent) {
         Player player = experienceEvent.getPlayer();
-        if (plugin.isProgressEnabled(player) && !plugin.isDisabledProgress(experienceEvent.getSkill())) {
+        if (isProgressEnabled(player) && plugin.getConfiguration().isSkillEnabled(experienceEvent.getSkill())) {
             String template = plugin.getConfig().getString("progress-msg");
             String message = replaceVariables(experienceEvent, template);
-            plugin.sendActionMessage(player, message);
+            refreshManager.sendActionMessage(player, message);
         }
+    }
+
+    public boolean isProgressEnabled(Player player) {
+        return !plugin.getProgressBarDisabled().contains(player.getUniqueId())
+                && player.hasPermission(plugin.getName().toLowerCase() + ".display");
     }
 
     private String replaceVariables(McMMOPlayerXpGainEvent experienceEvent, String template) {

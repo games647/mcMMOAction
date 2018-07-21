@@ -1,6 +1,6 @@
 # mcMMOAction config
 
-# A notification sound if the mcMMO message will be displayed into the action bar slot
+# A notification sound if the mcMMO message will be displayed into the action bar slot.
 notification-sound:
     enabled: false
 
@@ -12,10 +12,15 @@ notification-sound:
     # Here stands 0.63 for 100% - a special case in Minecraft
     pitch: 0.1
 
+# How long should the message be displayed in seconds. This schedules a backround task that will refresh the message
+# in order to display it for a longer time. Currently only values higher than 2 (Minecraft Default) are allowed.
+# If you need something else please write a feature request.
+appearance-time: 2
+
 # Message keys on this will be added to this plugin besides the default ones
 
 # You can see all messages with it's keys here:
-# https://github.com/mcMMO-Dev/mcMMO/blob/master/src/main/resources/locale/locale_en_US.properties
+# https://github.com/mcMMO-Dev/mcMMO/blob/master/src/main/resources/locale/
 others:
     - Swords.Combat.Countered
     - Repair.Error
@@ -37,8 +42,8 @@ ignore:
     # Explicit ignore specific messages by adding the message key here
     # For example this makes it possible to show all level-up messages in the action except for excavation
 
-    # Furthermore messages are added if the message ends with '**' - It looks like these message are intended to be
-    # a notification
+    # Furthermore messages are added if the message ends with '**'
+    # It looks like these message are intended to be a notification
 
     # You can see all messages with it's keys here:
     # https://github.com/mcMMO-Dev/mcMMO/blob/master/src/main/resources/locale/locale_en_US.properties

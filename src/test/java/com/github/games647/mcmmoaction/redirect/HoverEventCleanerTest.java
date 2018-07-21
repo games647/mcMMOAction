@@ -1,4 +1,4 @@
-package com.github.games647.mcmmoaction.listener;
+package com.github.games647.mcmmoaction.redirect;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

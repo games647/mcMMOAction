@@ -1,4 +1,4 @@
-package com.github.games647.mcmmoaction.listener;
+package com.github.games647.mcmmoaction.redirect;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 
 import java.util.stream.IntStream;
 
-public class HoverEventCleaner {
+public class HoverEventCleaner extends StubHoverCleaner {
 
     private static final String[] childrenClean = {"extra", "with"};
 

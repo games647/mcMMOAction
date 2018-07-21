@@ -26,16 +26,18 @@ class ToggleCommand implements CommandExecutor {
             if (args.length > 0) {
                 if ("progress".equalsIgnoreCase(args[0])) {
                     toggleProgress(player);
-                } else {
-                    sendLocaleMessage(sender, "unknown-argument");
+                    return true;
                 }
-            } else {
-                toggle(player, plugin.getActionBarDisabled(), "toggle-actionbar", "toggle-chat");
+
+                sendLocaleMessage(sender, "unknown-argument");
+                return true;
             }
-        } else {
-            sendLocaleMessage(sender, "no-console");
+
+            toggle(player, plugin.getActionBarDisabled(), "toggle-actionbar", "toggle-chat");
+            return true;
         }
 
+        sendLocaleMessage(sender, "no-console");
         return true;
     }
 
