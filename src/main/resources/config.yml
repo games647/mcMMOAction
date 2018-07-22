@@ -57,7 +57,7 @@ ignore:
     # Numbers and color formatting codes are automatically removed to match the output for multiple of variations.
     #
     # Here you can see an example for the plugin mcMMOHorses: https://github.com/ZombieStriker/mcMMOHorses/
-    fixed:
+    custom:
         # Notification
         - '**INFURIATE**'
         - '**DODGE**'

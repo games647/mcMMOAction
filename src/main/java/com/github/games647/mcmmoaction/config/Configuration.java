@@ -68,28 +68,28 @@ public class Configuration {
         }
     }
 
-    private void loadMessages(ConfigurationSection config) {
+    private void loadMessages(ConfigurationSection section) {
         messages.addAll(loadingByIdentifier());
 
         for (SkillType skillType : SkillType.values()) {
             if (!skillType.isChildSkill()) {
                 String messageKey = StringUtils.getCapitalized(skillType.toString()) + ".Skillup";
                 String localizedMessage = getLocalizedMessage(messageKey);
-                addOrRemove(messages, localizedMessage, config.getBoolean("ignore.levelup"));
+                addOrRemove(messages, localizedMessage, section.getBoolean("ignore.levelup"));
             }
 
             AbilityType ability = skillType.getAbility();
             if (ability != null) {
                 String abilityOn = ChatColor.stripColor(ability.getAbilityOn());
                 String abilityOff = ChatColor.stripColor(ability.getAbilityOff());
-                addOrRemove(messages, abilityOn, config.getBoolean("ignore.ability"));
-                addOrRemove(messages, abilityOff, config.getBoolean("ignore.ability"));
+                addOrRemove(messages, abilityOn, section.getBoolean("ignore.ability"));
+                addOrRemove(messages, abilityOff, section.getBoolean("ignore.ability"));
             }
 
             ToolType tool = skillType.getTool();
             if (tool != null) {
-                addOrRemove(messages, ChatColor.stripColor(tool.getRaiseTool()), config.getBoolean("ignore.tool"));
-                addOrRemove(messages, ChatColor.stripColor(tool.getLowerTool()), config.getBoolean("ignore.tool"));
+                addOrRemove(messages, ChatColor.stripColor(tool.getRaiseTool()), section.getBoolean("ignore.tool"));
+                addOrRemove(messages, ChatColor.stripColor(tool.getLowerTool()), section.getBoolean("ignore.tool"));
             }
         }
 
@@ -108,7 +108,7 @@ public class Configuration {
         messages.add(getLocalizedMessage("Party.LevelUp"));
 
         //hardcore messages
-        boolean hardcoreIgnore = config.getBoolean("ignore.hardcore");
+        boolean hardcoreIgnore = section.getBoolean("ignore.hardcore");
         addOrRemove(messages, getLocalizedMessage("Hardcore.DeathStatLoss.PlayerDeath"), hardcoreIgnore);
         addOrRemove(messages, getLocalizedMessage("Hardcore.Vampirism.Killer.Failure"), hardcoreIgnore);
         addOrRemove(messages, getLocalizedMessage("Hardcore.Vampirism.Killer.Success"), hardcoreIgnore);
@@ -116,15 +116,18 @@ public class Configuration {
         addOrRemove(messages, getLocalizedMessage("Hardcore.Vampirism.Victim.Success"), hardcoreIgnore);
 
         //general message
-        addOrRemove(messages, getLocalizedMessage("Skills.TooTired"), config.getBoolean("ignore.tooTired"));
+        addOrRemove(messages, getLocalizedMessage("Skills.TooTired"), section.getBoolean("ignore.tooTired"));
 
         //explicit added messages
-        messages.addAll(config.getStringList("others").stream()
+        messages.addAll(section.getStringList("others").stream()
                 .map(this::getLocalizedMessage)
                 .collect(toList()));
 
+        //custom
+        messages.addAll(section.getStringList("custom"));
+
         //explicit ignored messages
-        config.getStringList("ignore.others").stream().map(this::getLocalizedMessage).forEach(messages::remove);
+        section.getStringList("ignore.others").stream().map(this::getLocalizedMessage).forEach(messages::remove);
     }
 
     private void addOrRemove(Collection<String> messages, String message, boolean ignore) {
