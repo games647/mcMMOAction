@@ -14,6 +14,9 @@ dev-url: ${project.url}
 # Without Protocollib the plugin does not work at all
 depend: [ProtocolLib, mcMMO]
 
+# This plugin don't have to be transformed for compatibility with Minecraft >= 1.13
+api-version: 1.13
+
 commands:
     mmoaction:
         description: 'Toggle the action bar display or progress feature'
