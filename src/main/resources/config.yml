@@ -81,9 +81,11 @@ progress: false
 
 # What message should be displayed if the above option is activated
 # Supported variables are:
+# * {power} - Power level
 # * {skill-type} - skill type
-# * {exp} - Current experience
-# * {exp-remaining} - Remaining experience for the next level
+# * {exp} - Current experience points
+# * {exp-remaining} - Remaining experience points for the next level
+# * {exp-next-lvl} - Total experience points required for the next level
 # * {current-lvl} - Current skill level
 # * {next-lvl} - Next skill level
 progress-msg: '&a{skill-type}: &b{exp}&f/&c{exp-remaining} &f| &3Lv: &b{current-lvl}'

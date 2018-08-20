@@ -6,8 +6,10 @@ main: ${project.groupId}.${project.artifactId}.${project.name}
 
 # meta data for plugin managers
 authors: [games647, 'https://github.com/games647/mcMMOAction/graphs/contributors']
+
 description: |
     ${project.description}
+
 website: ${project.url}
 dev-url: ${project.url}
 

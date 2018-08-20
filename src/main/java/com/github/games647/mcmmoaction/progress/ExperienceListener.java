@@ -24,9 +24,14 @@ public class ExperienceListener implements Listener {
         this.plugin = plugin;
         this.refreshManager = refreshManager;
 
+        formatter.addReplacer("power", (player, skill) -> valueOf(ExperienceAPI.getPowerLevel(player)));
         formatter.addReplacer("skill-type", (player, skill) -> skill);
+
         formatter.addReplacer("exp", (player, skill) -> valueOf(ExperienceAPI.getXP(player, skill)));
         formatter.addReplacer("exp-remaining", (player, skill) -> valueOf(ExperienceAPI.getXPRemaining(player, skill)));
+        formatter.addReplacer("exp-next-lvl", (player, skill)
+                -> valueOf(ExperienceAPI.getXPToNextLevel(player, skill)));
+
         formatter.addReplacer("current-lvl", (player, skill) -> valueOf(ExperienceAPI.getLevel(player, skill)));
         formatter.addReplacer("next-lvl", (player, skill) -> valueOf(ExperienceAPI.getLevel(player, skill) + 1));
     }
