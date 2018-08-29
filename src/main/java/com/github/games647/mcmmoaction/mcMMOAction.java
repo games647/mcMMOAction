@@ -95,9 +95,9 @@ public class mcMMOAction extends JavaPlugin {
     }
 
     private void saveDisabled(String fileName, Collection<UUID> disabledLst) {
-        Path file = getDataFolder().toPath().resolve(fileName);
+        Path dataFolder = getDataFolder().toPath();
+        Path file = dataFolder.resolve(fileName);
         try {
-            Path dataFolder = file.getParent();
             if (Files.notExists(dataFolder)) {
                 Files.createDirectories(dataFolder);
             }

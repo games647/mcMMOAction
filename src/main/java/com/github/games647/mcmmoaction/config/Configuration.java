@@ -170,7 +170,7 @@ public class Configuration {
     }
 
     public boolean isSkillEnabled(SkillType skill) {
-        return disabledSkillProgress.contains(skill);
+        return !disabledSkillProgress.contains(skill);
     }
 
     public boolean isProgressEnabled() {
