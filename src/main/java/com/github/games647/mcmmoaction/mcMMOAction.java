@@ -41,6 +41,12 @@ public class mcMMOAction extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if (!getServer().getPluginManager().isPluginEnabled("mcMMO")) {
+            getLogger().warning("mcMMO is disabled. That plugin is required, so we are disabling this one.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         configuration = new Configuration(this);
         configuration.saveDefault();
         configuration.load();
