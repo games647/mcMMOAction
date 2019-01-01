@@ -81,14 +81,12 @@ public class mcMMOAction extends JavaPlugin {
 
     private Set<UUID> loadDisabled(String fileName) {
         Path file = getDataFolder().toPath().resolve(fileName);
-        if (Files.notExists(file)) {
-            return new HashSet<>();
-        }
-
-        try (Stream<String> lines = Files.lines(file)) {
-            return lines.map(UUID::fromString).collect(toSet());
-        } catch (IOException ioEx) {
-            getLogger().log(Level.WARNING, "Failed to load disabled list", ioEx);
+        if (Files.exists(file)) {
+            try (Stream<String> lines = Files.lines(file)) {
+                return lines.map(UUID::fromString).collect(toSet());
+            } catch (IOException ioEx) {
+                getLogger().log(Level.WARNING, "Failed to load disabled list", ioEx);
+            }
         }
 
         return new HashSet<>();
