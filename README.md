@@ -7,7 +7,10 @@
 This lightweight plugin is based on the feature request from [here](https://github.com/mcMMO-Dev/mcMMO/issues/2659).
 It forwards some useful mcMMO messages to the action chat. Instead that these messages spam the regular chat,
 you'll see them above the item-bar and they will disappear after a shorten time. This plugin has no config. Just drop
-the plugin in your plugins folder and start your server.
+the plugin in your plugins folder and start your server. 
+
+This was implemented in an extra plugin, because action bar messages are only implemented in the Spigot API
+and not in Bukkit. mcMMO only depends on the Bukkit API and doesn't want to move to Spigot only API.
 
 ## Features
 
