@@ -1,8 +1,8 @@
 package com.github.games647.mcmmoaction.config;
 
 import com.github.games647.mcmmoaction.mcMMOAction;
-import com.gmail.nossr50.datatypes.skills.AbilityType;
-import com.gmail.nossr50.datatypes.skills.SkillType;
+import com.gmail.nossr50.datatypes.skills.PrimarySkill;
+import com.gmail.nossr50.datatypes.skills.SuperAbility;
 import com.gmail.nossr50.datatypes.skills.ToolType;
 import com.gmail.nossr50.locale.LocaleLoader;
 import com.gmail.nossr50.mcMMO;
@@ -34,7 +34,7 @@ public class Configuration {
     private final SoundConfig soundConfig;
 
     private final Set<String> messages = Sets.newHashSet();
-    private final Set<SkillType> disabledSkillProgress = Sets.newHashSet();
+    private final Set<PrimarySkill> disabledSkillProgress = Sets.newHashSet();
 
     private boolean progressEnabled;
     private int appearanceTime;
@@ -58,7 +58,7 @@ public class Configuration {
         appearanceTime = Math.max(2, config.getInt("appearance-time"));
 
         for (String disableSkill : config.getStringList("progress-disabled")) {
-            Optional<SkillType> skillType = Enums.getIfPresent(SkillType.class, disableSkill.toUpperCase());
+            Optional<PrimarySkill> skillType = Enums.getIfPresent(PrimarySkill.class, disableSkill.toUpperCase());
             if (skillType.isPresent()) {
                 disabledSkillProgress.add(skillType.get());
             } else {
@@ -71,14 +71,14 @@ public class Configuration {
     private void loadMessages(ConfigurationSection section) {
         messages.addAll(loadingByIdentifier());
 
-        for (SkillType skillType : SkillType.values()) {
+        for (PrimarySkill skillType : PrimarySkill.values()) {
             if (!skillType.isChildSkill()) {
                 String messageKey = StringUtils.getCapitalized(skillType.toString()) + ".Skillup";
                 String localizedMessage = getLocalizedMessage(messageKey);
                 addOrRemove(messages, localizedMessage, section.getBoolean("ignore.levelup"));
             }
 
-            AbilityType ability = skillType.getAbility();
+            SuperAbility ability = skillType.getAbility();
             if (ability != null) {
                 String abilityOn = ChatColor.stripColor(ability.getAbilityOn());
                 String abilityOff = ChatColor.stripColor(ability.getAbilityOff());
@@ -169,7 +169,7 @@ public class Configuration {
         return messages;
     }
 
-    public boolean isSkillEnabled(SkillType skill) {
+    public boolean isSkillEnabled(PrimarySkill skill) {
         return !disabledSkillProgress.contains(skill);
     }
 
