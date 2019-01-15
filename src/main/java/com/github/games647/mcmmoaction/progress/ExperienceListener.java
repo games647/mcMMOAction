@@ -3,7 +3,7 @@ package com.github.games647.mcmmoaction.progress;
 import com.github.games647.mcmmoaction.mcMMOAction;
 import com.github.games647.mcmmoaction.refresh.RefreshManager;
 import com.gmail.nossr50.api.ExperienceAPI;
-import com.gmail.nossr50.datatypes.skills.PrimarySkill;
+import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 
 import org.bukkit.ChatColor;
@@ -53,7 +53,7 @@ public class ExperienceListener implements Listener {
 
     private String replaceVariables(McMMOPlayerXpGainEvent experienceEvent, String template) {
         Player player = experienceEvent.getPlayer();
-        PrimarySkill skill = experienceEvent.getSkill();
+        SkillType skill = experienceEvent.getSkill();
 
         String coloredMessage = ChatColor.translateAlternateColorCodes('&', template);
         return formatter.replace(player, skill.getName(), coloredMessage);

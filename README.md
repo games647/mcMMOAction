@@ -10,7 +10,8 @@ you'll see them above the item-bar and they will disappear after a shorten time.
 the plugin in your plugins folder and start your server. 
 
 This was implemented in an extra plugin, because action bar messages are only implemented in the Spigot API
-and not in Bukkit. mcMMO only depends on the Bukkit API and doesn't want to move to Spigot only API.
+and not in Bukkit. mcMMO only depends on the Bukkit API and did not want to move to Spigot only API. This changed for
+mcMMO 2.1 and so will be included in the main plugin. This plugin still exists for earlier versions.
 
 ## Features
 
