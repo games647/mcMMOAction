@@ -47,6 +47,17 @@ public class mcMMOAction extends JavaPlugin {
             return;
         }
 
+        try {
+            Class.forName("com.gmail.nossr50.datatypes.skills.PrimarySkill");
+            // found -> we can continue
+        } catch (ClassNotFoundException classNotFoundEx) {
+            getLogger().warning("This mcMMO plugin version is not compatible wit this plugin. " +
+                    "If you use mcMMO above v2.1 you can remove this plugin, because the same functionality is now " +
+                    "integrated in mcMMO itself");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         configuration = new Configuration(this);
         configuration.saveDefault();
         configuration.load();
