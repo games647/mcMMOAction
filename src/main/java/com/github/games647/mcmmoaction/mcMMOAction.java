@@ -48,7 +48,7 @@ public class mcMMOAction extends JavaPlugin {
         }
 
         try {
-            Class.forName("com.gmail.nossr50.datatypes.skills.PrimarySkill");
+            Class.forName("com.gmail.nossr50.datatypes.skills.SkillType");
             // found -> we can continue
         } catch (ClassNotFoundException classNotFoundEx) {
             getLogger().warning("This mcMMO plugin version is not compatible wit this plugin. " +
