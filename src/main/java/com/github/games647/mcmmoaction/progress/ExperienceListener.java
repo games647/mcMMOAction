@@ -6,6 +6,7 @@ import com.gmail.nossr50.api.ExperienceAPI;
 import com.gmail.nossr50.datatypes.skills.SkillType;
 import com.gmail.nossr50.events.experience.McMMOPlayerXpGainEvent;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,13 +37,16 @@ public class ExperienceListener implements Listener {
         formatter.addReplacer("next-lvl", (player, skill) -> valueOf(ExperienceAPI.getLevel(player, skill) + 1));
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onExperienceGain(McMMOPlayerXpGainEvent experienceEvent) {
         Player player = experienceEvent.getPlayer();
         if (isProgressEnabled(player) && plugin.getConfiguration().isSkillEnabled(experienceEvent.getSkill())) {
-            String template = plugin.getConfig().getString("progress-msg");
-            String message = replaceVariables(experienceEvent, template);
-            refreshManager.sendActionMessage(player, message);
+            // run the task delayed to get the new updated experience
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                String template = plugin.getConfig().getString("progress-msg");
+                String message = replaceVariables(experienceEvent, template);
+                refreshManager.sendActionMessage(player, message);
+            }, 1L);
         }
     }
 

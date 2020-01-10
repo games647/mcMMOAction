@@ -119,10 +119,11 @@ public class RefreshManager extends MessageListener implements Listener {
     }
 
     private void writeChatPosition(PacketContainer packet) {
+        ChatType infoPosition = ChatType.GAME_INFO;
         if (plugin.supportsChatTypeEnum()) {
-            packet.getChatTypes().write(0, ChatType.GAME_INFO);
+            packet.getChatTypes().write(0, infoPosition);
         } else {
-            packet.getBytes().write(0, ChatType.GAME_INFO.getId());
+            packet.getBytes().write(0, infoPosition.getId());
         }
     }
 }
