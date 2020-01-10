@@ -86,8 +86,11 @@ public class mcMMOAction extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        saveDisabled(ACTIONBAR_FILE_NAME, actionBarDisabled);
-        saveDisabled(PROGRESS_FILE_NAME, progressBarDisabled);
+        if (actionBarDisabled != null)
+            saveDisabled(ACTIONBAR_FILE_NAME, actionBarDisabled);
+
+        if (progressBarDisabled != null)
+            saveDisabled(PROGRESS_FILE_NAME, progressBarDisabled);
     }
 
     private Set<UUID> loadDisabled(String fileName) {
