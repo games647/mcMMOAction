@@ -1,19 +1,15 @@
 package com.github.games647.mcmmoaction.progress;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.core.AllOf.allOf;
-import static org.hamcrest.core.Is.is;
-
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MessageFormatterTest {
 
     private MessageFormatter<Integer, String> formatter;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         formatter = new MessageFormatter<>();
         formatter.addReplacer("var", (f, s) -> s);
@@ -21,13 +17,14 @@ public class MessageFormatterTest {
 
     @Test
     public void testUnmodified() {
-        assertThat(formatter.replace(42, "123", ""), is(""));
-        assertThat(formatter.replace(1, "123", "abc"), is("abc"));
+        assertEquals("", formatter.replace(42, "123", ""));
+        assertEquals("", formatter.replace(42, "123", ""));
+        assertEquals("abc", formatter.replace(1, "123", "abc"));
     }
 
     @Test
     public void testReplacing() {
         String replaced = formatter.replace(42, "replaced", "{var} hello");
-        assertThat(replaced, allOf(containsString("replaced"), containsString("hello")));
+        assertEquals("replaced hello", replaced);
     }
 }

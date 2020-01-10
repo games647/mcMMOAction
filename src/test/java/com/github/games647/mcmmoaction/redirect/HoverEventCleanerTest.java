@@ -7,19 +7,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Collectors;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static com.google.common.truth.Truth.assertThat;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HoverEventCleanerTest {
 
     private HoverEventCleaner cleaner;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         this.cleaner = new HoverEventCleaner();
     }
@@ -27,13 +26,13 @@ public class HoverEventCleanerTest {
     @Test
     public void testUnmodified() throws Exception {
         String expected = readFile("/normal.json").replace(" ", "");
-        assertThat(expected, is(cleaner.cleanJson(expected)));
+        assertEquals(expected, cleaner.cleanJson(expected));
     }
 
     @Test
     public void shouldRemoveHover() throws Exception {
         String hover = readFile("/hover-event.json");
-        assertThat(cleaner.cleanJson(hover), not(containsString("hoverEvent")));
+        assertThat(cleaner.cleanJson(hover)).doesNotContain("hoverEvent");
     }
 
     private String readFile(String name) throws IOException, URISyntaxException {

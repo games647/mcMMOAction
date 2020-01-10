@@ -4,18 +4,17 @@ import java.time.Duration;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.core.Is.is;
-
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TimeoutManagerTest {
 
     private TimeoutManager timeoutManager;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         timeoutManager = new TimeoutManager(Duration.ofSeconds(2));
     }
@@ -24,12 +23,12 @@ public class TimeoutManagerTest {
     public void testWaiting() throws Exception {
         UUID uuid = UUID.randomUUID();
 
-        assertThat(timeoutManager.isAllowed(uuid), is(true));
+        assertTrue(timeoutManager.isAllowed(uuid));
         TimeUnit.SECONDS.sleep(1);
-        assertThat(timeoutManager.isAllowed(uuid), is(false));
+        assertFalse(timeoutManager.isAllowed(uuid));
 
         TimeUnit.SECONDS.sleep(1);
-        assertThat(timeoutManager.isAllowed(uuid), is(true));
+        assertTrue(timeoutManager.isAllowed(uuid));
     }
 
     @Test
@@ -37,9 +36,9 @@ public class TimeoutManagerTest {
         UUID first = UUID.randomUUID();
         UUID second = UUID.randomUUID();
 
-        assertThat(timeoutManager.isAllowed(first), is(true));
+        assertTrue(timeoutManager.isAllowed(first));
         TimeUnit.SECONDS.sleep(1);
-        assertThat(timeoutManager.isAllowed(first), is(false));
-        assertThat(timeoutManager.isAllowed(second), is(true));
+        assertFalse(timeoutManager.isAllowed(first));
+        assertTrue(timeoutManager.isAllowed(second));
     }
 }
