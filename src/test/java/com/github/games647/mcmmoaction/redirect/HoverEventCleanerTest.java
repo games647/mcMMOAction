@@ -5,7 +5,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,6 +36,6 @@ public class HoverEventCleanerTest {
 
     private String readFile(String name) throws IOException, URISyntaxException {
         Path file = Paths.get(getClass().getResource(name).toURI());
-        return Files.readAllLines(file).stream().collect(Collectors.joining());
+        return String.join("", Files.readAllLines(file));
     }
 }
