@@ -105,6 +105,8 @@ public class Configuration {
         messages.add(getLocalizedMessage("Swords.Combat.Bleeding.Started"));
         messages.add(getLocalizedMessage("Swords.Combat.Bleeding.Stopped"));
 
+        messages.add(getLocalizedMessage("Herbalism.HylianLuck"));
+
         messages.add(getLocalizedMessage("Party.LevelUp"));
 
         //hardcore messages
