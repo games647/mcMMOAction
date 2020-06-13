@@ -34,7 +34,8 @@ mcMMO 2.1 and so will be included in the main plugin. This plugin still exists f
 * Hardcore messages
 * Refresh message
 * Party level-up
-* Combat abilities (i.e. swords bleeding)
+* Combat abilities (i.e. swords bleeding, taming gore)
+* Herbalism hylian luck
 * [mcMMOHorses](https://github.com/ZombieStriker/mcMMOHorses/) Support
     * Refresh messages for Infuriate and Super Speed
     * Skills increases for Agility, Swiftness, Vitality and Wrath
