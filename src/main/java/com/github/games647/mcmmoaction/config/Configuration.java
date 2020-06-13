@@ -100,6 +100,8 @@ public class Configuration {
         messages.add(getLocalizedMessage("Axes.Combat.CriticalHit"));
         messages.add(getLocalizedMessage("Axes.Combat.CritStruck"));
 
+        messages.add(getLocalizedMessage("Combat.Gore"));
+
         messages.add(getLocalizedMessage("Swords.Combat.Counter.Hit"));
         messages.add(getLocalizedMessage("Swords.Combat.Bleeding"));
         messages.add(getLocalizedMessage("Swords.Combat.Bleeding.Started"));
