@@ -110,7 +110,7 @@ public class RefreshManager extends MessageListener implements Listener {
         writeChatPosition(chatPacket);
 
         // ignore our own packets
-        chatPacket.addMetadata(plugin.getName(), true);
+        chatPacket.setMeta(plugin.getName(), true);
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(receiver, chatPacket);
         } catch (InvocationTargetException invokeEx) {
