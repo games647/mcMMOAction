@@ -53,11 +53,11 @@ public class RedirectListener extends MessageListener {
     @Override
     public void onPacketSending(PacketEvent packetEvent) {
         PacketContainer packet = packetEvent.getPacket();
-        if (packetEvent.isCancelled() || isOurPacket(packet)) {
+        Player player = packetEvent.getPlayer();
+        if (packetEvent.isCancelled() || isOurPacket(packet) || !isRedirectEnabled(player)) {
             return;
         }
 
-        Player player = packetEvent.getPlayer();
         WrappedChatComponent message = packet.getChatComponents().read(0);
         ChatType chatType = readChatPosition(packet);
         if (message == null) {
@@ -67,7 +67,7 @@ public class RedirectListener extends MessageListener {
         String json = cleaner.cleanJson(message.getJson());
 
         BaseComponent chatComponent = ComponentSerializer.parse(json)[0];
-        if (chatComponent != null && isMcMMOMessage(chatComponent.toPlainText()) && isRedirectEnabled(player)) {
+        if (chatComponent != null && isMcMMOMessage(chatComponent.toPlainText())) {
             //action bar doesn't support the new chat features
             String legacyText = pluginTagPattern.matcher(chatComponent.toLegacyText()).replaceFirst("");
             refreshManager.sendActionMessage(player, legacyText);
