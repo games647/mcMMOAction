@@ -4,7 +4,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.ChatType;
 
-public class MessageListener extends PacketAdapter {
+public abstract class MessageListener extends PacketAdapter {
 
     protected final mcMMOAction plugin;
 
@@ -15,7 +15,7 @@ public class MessageListener extends PacketAdapter {
     }
 
     protected boolean isOurPacket(PacketContainer container) {
-        return container.getMeta(plugin.getName()).isPresent();
+        return (boolean) container.getMeta(plugin.getName()).orElse(false);
     }
 
     protected ChatType readChatPosition(PacketContainer packet) {

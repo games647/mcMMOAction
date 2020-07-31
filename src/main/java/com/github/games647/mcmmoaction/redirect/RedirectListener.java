@@ -60,7 +60,7 @@ public class RedirectListener extends MessageListener {
         Player player = packetEvent.getPlayer();
         WrappedChatComponent message = packet.getChatComponents().read(0);
         ChatType chatType = readChatPosition(packet);
-        if (message == null || chatType != ChatType.SYSTEM) {
+        if (message == null) {
             return;
         }
 
