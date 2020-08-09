@@ -111,6 +111,7 @@ public class RefreshManager extends MessageListener implements Listener {
 
         // ignore our own packets
         chatPacket.setMeta(plugin.getName(), true);
+        chatPacket.getUUIDs().writeSafely(0, new UUID(0, 0));
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(receiver, chatPacket);
         } catch (InvocationTargetException invokeEx) {
