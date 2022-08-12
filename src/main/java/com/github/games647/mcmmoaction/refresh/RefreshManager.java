@@ -6,16 +6,14 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.ChatType;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.github.games647.mcmmoaction.MessageListener;
 import com.github.games647.mcmmoaction.TimeoutManager;
 import com.github.games647.mcmmoaction.config.SoundConfig;
 import com.github.games647.mcmmoaction.mcMMOAction;
-import com.github.games647.mcmmoaction.MessageListener;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -112,11 +110,7 @@ public class RefreshManager extends MessageListener implements Listener {
         // ignore our own packets
         chatPacket.setMeta(plugin.getName(), true);
         chatPacket.getUUIDs().writeSafely(0, new UUID(0, 0));
-        try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(receiver, chatPacket);
-        } catch (InvocationTargetException invokeEx) {
-            plugin.getLogger().log(Level.WARNING, "Failed to send action bar message", invokeEx);
-        }
+        ProtocolLibrary.getProtocolManager().sendServerPacket(receiver, chatPacket);
     }
 
     private void writeChatPosition(PacketContainer packet) {
